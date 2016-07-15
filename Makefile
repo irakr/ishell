@@ -1,6 +1,6 @@
 #################Makefile for building the shell program##################
 
-#Variables for compiler commands
+#Variables for compiler commands and flags
 CC=gcc
 CFLAGS=-c -Wall
 
@@ -23,7 +23,7 @@ DEBUG=-g
 main:	shell
 
 shell:	$(SHELL_O) $(SHELL_LIB_O)	
-	$(CC) $(SHELL_O) $(SHELL_LIB_O) -o $(BIN_DIR)shell
+	$(CC) $(SHELL_O) $(SHELL_LIB_O) -o $(BIN_DIR)ishell
 
 shell.o:	$(SHELL_C)
 	$(CC) $(CFLAGS) $(SHELL_C) -o $(SHELL_O)
