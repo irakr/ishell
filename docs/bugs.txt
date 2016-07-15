@@ -1,0 +1,3 @@
+********************************************* Bug report ******************************************
+
+1) The 'cd' command causes a <segmentation-fault> error.

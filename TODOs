@@ -1,0 +1,41 @@
+***************** LIST OF TODOs **********************
+
+Overviews:
+
+1) Make a module for the 'cd' command.
+2) Make a module for changing PS1,PS2 variable values.
+3) Make a module for parsing scripts.
+4) Make a module for executing in-built commands. Eg: cd,exit, etc.
+5) Make a module for managing shell and environment variables.
+
+Details:
+
+1) Module for 'cd' command:-
+The module for the 'cd' command should do a directory change for the terminal.
+See the documentation for the 'cd' command and write the codes for each type of
+'cd' command. For eg: # cd ..	//Go to parent directory of the current dir.
+		#cd -	//Goto the previous directory
+		#cd	//Go to the home directory of the user
+The module should work for both absolute and relative paths.
+
+---------------------------------------------------------------------------------------------------------
+2) Module for PS1,PS2:-
+PS1 variable can be changed by the user whenever wanted. So whenever the user
+enters the command 
+	#PS1=<some-string>
+then call the change_ps1() function.
+See documentations for PS2 variable and implement. Implementation will be similar.
+
+---------------------------------------------------------------------------------------------------------
+3) Module for shell script parsing:-
+	[TO BE IMPLEMENTED]
+
+---------------------------------------------------------------------------------------------------------
+4) Module for executing in-built commands:-
+After parsing the input command, if the command is found to an in-built command, then some action has to performed manually for that. This is
+because in-built commands are not the part of the system(or separately installed programs), they are the parts of the shell itself.
+Eg: exit, cd, etc...
+Therefore, we cannot do a fork-and-exec to those commands.
+
+---------------------------------------------------------------------------------------------------------
+5) Module for managing shell and environment variables:-

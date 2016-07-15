@@ -1,0 +1,42 @@
+Thu Jun 23 01:13:28 IST 2016
+- Completed the working of the parse_cmd() function and its internal references
+
+------------------------------------------------------------------------------------------------------------------
+
+Fri Jun 24 00:34:51 IST 2016
+- Modified the working of parse_cmd() and its references since there was a bug previously.
+- Modified the 'cmd_t' data structure to hold only 'command-name' and its 'arguments'.
+- Added an interesting algorithm to fill the array 'cmd'(type: cmd_t) with command-names and their respective arguments from the 'tokens'.(In function parse_cmd())
+
+------------------------------------------------------------------------------------------------------------------
+
+Sun Jun 26 23:01:45 IST 2016
+- Added the assert_exit() function that checks for the 'exit' command.
+- Modified parse_cmd(). Now it firstly checks whether the 'cmd_t **cmd' variable is already filled or not. If it is not-null then release
+  memory from it. Then it will use-able for parsing the next command.
+
+------------------------------------------------------------------------------------------------------------------
+
+Mon Jun 27 19:57:35 IST 2016
+- Added the function identify_cmd_type(): It sets the flag to a value of either INBUILT_CMD or REGULAR_CMD by checking the cmd_t struct for a
+  particular command.
+- Modified parse_cmd(): Now it checks the no. of pipes and background operators and sets the flag cmd_type to anyone or both.
+	(Note that all of these flags are ORed against each other)
+	
+------------------------------------------------------------------------------------------------------------------
+
+Thu Jun 30 23:41:03 IST 2016
+- Added function execute_cmd(): This function will be called by main() after parse_cmd() is done. The duty of this function is to identify
+  the type of command and call appropriate execute() functions.
+  There will be different varities of the execute() functions for each command type. This is done just for modularity for now. Later they
+  may be combined as a single composite execute() function that does the job of each type.
+- Modified command type flags. See flags.h for details
+
+------------------------------------------------------------------------------------------------------------------
+
+
+Fri Jul  1 23:21:50 IST 2016
+- New data structure added: 'info_cmd'. See shell_lib.h for details. It is basically an outer layer for the original cmd_t struct which holds
+  a command and its argument list only. Now it is a part of the info_cmd struct which includes other information too, viz, No of piped commands,
+  no of tokens and no of backgrounded commands.
+- Modified the parse_cmd() function: The data-type of the 2nd arg is changed from cmd_t* to info_cmd* .

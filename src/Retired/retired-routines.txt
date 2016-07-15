@@ -1,0 +1,33 @@
+/************************************************* RETIRED ROUTINES ***********************************************************/
+
+
+1) Belongs to file:	shell_lib.c
+ 
+//Check the input command list against in-built commands.
+//If the command(1st command) is one of the in-built commands then piping will be discarded and the rest of the portion of the 
+//input command after pipe/redirection operator will be discarded.
+//If the commands after the pipe operator are in-built commands then they will be discarded.
+void chk_cmd_type(cmd_t *cmd_list, int n){
+	
+	//Determine and set the 'type' field of each cmd_t object. But if any of them is found to be an inbuilt command, then return and
+	//do nothing.
+	//This behaviour is not exactly implemented because the actual bash shell interprets commands like `exit | ls -l` and `ls -l | exit`
+	//in two different manner.
+	
+	for(int i=0; i<n; i++){
+		if(strcmp(cmd_list[i].cmd_name,"cd") == 0){
+			cmd_list[i].type = INBUILT_CMD;
+			return;
+		}
+		else if(strcmp(cmd_list[i].cmd_name,"exit") == 0){
+			cmd_list[i].type = INBUILT_CMD;
+			return;
+		}
+		else
+			cmd_list[i].type = REGULAR_CMD;
+	}
+}
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+
