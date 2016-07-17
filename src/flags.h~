@@ -47,7 +47,7 @@ error_t sh_error;
 // like: ls,pwd,fdisk,etc...)
 typedef uint32_t cmdtype_t;
 
-//Macro representing values used by cmdtype_t flags
+//Flag values used by cmdtype_t data
 #define REGULAR_CMD	0x00010000
 #define INBUILT_CMD	0x00001000
 #define SINGLE_CMD	0x00000100

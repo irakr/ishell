@@ -83,7 +83,7 @@ inline void assert_exit(char *cmd);	//Check if the input command is 'exit'.
 
 void identify_cmd_type(cmd_t *cmd, int n);	//Identify type of command(INBUILT_CMD or REGULAR_CMD)
 
-int parse_cmd(char *command, info_cmd *cmd_info);	//Parse command
+int parse_cmd(const char *command, info_cmd *cmd_info);	//Parse command
 
 int (*tokenize_cmd(char *cmd,char *tokens[MAX_TOKENS])) [3] ;	//Tokenize user command
 

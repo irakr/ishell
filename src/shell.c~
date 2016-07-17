@@ -82,7 +82,7 @@ int main(void){
 	 *	3) Check for 'exit' command.
 	 *	4) Parse the command by the parse_cmd() procedure.
 	 *	5) During parsing, determine the type of command; whether in-built or regular.
-	 *	6) If in-built then execute codes for that, else if regular then check for pipes, redirections and perform fork-and-exec.
+	 *	6) If in-built then execute codes for that, else if regular then check for pipes, redirections and do fork-and-exec.
 	 *	7) Repeat from step-1 until 'exit' command.
 	 */
 	while(1){

@@ -39,7 +39,7 @@
 #include "flags.h"
 
 //Parse the 'command' and store <command,arg_list> pairs in the array of 'cmd_t' structs.
-int parse_cmd(char *command, info_cmd *cmd_info){
+int parse_cmd(const char *command, info_cmd *cmd_info){
 	
 	char *tokens[MAX_TOKENS];	//Tokens of a command
 	int (*counts)[3];	//No of tokens(counts[0]), pipes(counts[1]) '|' and background(counts[2]) '&' 

@@ -24,3 +24,9 @@
 
  * For more information, please refer to <http://unlicense.org>
  */
+ 
+/*
+ * environ.h
+ *
+ * This file contains shell environment variables just like we see any other shell.
+ */

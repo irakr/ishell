@@ -38,4 +38,4 @@ $(SHELL_LIB_O):	$(SHELL_LIB_C)
 	$(CC) $(CFLAGS) $(SHELL_LIB_C) -o $(SHELL_LIB_O)
 
 clean:
-	-rm -rf $(ALL_OBJECTS)
+	-rm -rf *.o
