@@ -4,5 +4,3 @@ It contains almost any feature that a shell contains. Its more like the bash she
 It can be used just like any shell via a terminal.
  
 # How to use
-It is simple:
-- Just run the 'ishell' binary located in src/ directory. This is just a temporary location of the executable. It will be organized later.
