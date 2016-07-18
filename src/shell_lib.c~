@@ -106,7 +106,7 @@ int parse_cmd(char *command, info_cmd *cmd_info){
 			k++;
 		}
 	}
-	--i;
+	
 	//TODO
 	//The logic here is if any inbuilt command is encountered anywhere, the whole command will be ignored by the shell.
 	//Eg: `ls -l | cd ..` will not cause any effect. Try it on a bash shell. But the reverse somehow works, if you try in a real bash shell.

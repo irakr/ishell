@@ -55,8 +55,7 @@ int main(void){
 	info_cmd command_info ={.cmd_ptr=NULL};	//This will be filled by the parse_cmd() function.
 	cmd_t *cmd = NULL;	//An array of structs each holding a command and its arguments.
 	
-	//@init_shell();
-	
+	init_shell();
 	/* TODO....
 	//Get the log file ready
 	if((log_file = fopen("/var/log/ishell/shell-logs","w+a")) == NULL){
