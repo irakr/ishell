@@ -36,17 +36,26 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/wait.h>
-#include "shell_lib.h"
 #include "flags.h"
+#include "shell_lib.h"
+#include "environ.h"
 
 //Parse the 'command' and store <command,arg_list> pairs in the array of 'cmd_t' structs.
-int parse_cmd(char *command, info_cmd *cmd_info){
+int parse_cmd(char *original_command, info_cmd *cmd_info){
 	
 	char *tokens[MAX_TOKENS];	//Tokens of a command
 	int (*counts)[3];	//No of tokens(counts[0]), pipes(counts[1]) '|' and background(counts[2]) '&' 
 	int i, j, k;
 	
-	
+	char *command = (char*)calloc(strlen(original_command)+1, sizeof(char));
+	if(command){
+		strcpy(command, original_command);
+	}
+	else{
+		//------- LOGGING ---------------
+		fprintf(stderr,"Shell Error: Memory allocation failed at parse_cmd():%d\n",__LINE__);
+		return -1;
+	}
 	/* First thing to do is to tokenize the command with delimiter ' '(WHITESPACE)
 	 * and also get the nos of tokens, pipes and background commands.
 	 */
@@ -203,9 +212,11 @@ char *search_cmd(const char *command){
 	return NULL;
 }
 
-//This macro defines the codes for a fork-and-exec structure.It is the core function of a shell. Rest are shell features.
-//So this macro maybe used by different routines responsible for executing different types of command.
-//ALGORITHM: Execute command by invoking the respective program for it using fork-and-exec procedure.
+/*
+ * This macro defines the codes for a fork-and-exec structure. It is the core function of a shell. Rest are all intelligent shell features.
+ * So this macro maybe used by different routines responsible for executing different types of command.
+ * Idea: Execute command by invoking the respective program for it using fork-and-exec procedure.
+ */
 //TODO....
 #define fork_exec()	int cpid,child_err_code;	\
 			cpid = fork();	\
@@ -233,6 +244,9 @@ void execute_cmd(cmd_t *cmd, int8_t pipe_count, int8_t bkgnd_count){
 			break;
 		case REG_BKGROUND:
 			printf("INFO: Command type = REGULAR AND BKGROUND\n");
+			break;
+		case INBUILT_SINGLE:
+			printf("INFO: Command type = INBUILT AND SINGLE\n");
 			break;
 		case INBUILT:
 			printf("INFO: Command type = INBUILT\n");

@@ -50,6 +50,10 @@
 #include "sh_limits.h"
 #include "flags.h"
 
+/*******************
+ * Data structures used by the shell
+ *******************
+ */
 //Data structure to store a command and its arguments.
 typedef struct{
 	char *cmd_name;	//A single component command. Or a command out of all piped commands of the input command.
@@ -65,15 +69,19 @@ typedef struct{
 	cmd_t *cmd_ptr;		//Pointer to a variable size array of cmd_t structs where each element(struct) holds a command and its arguments.
 } info_cmd;
 
-/*
- *	PS1 is the string that will be displayed as the prompt screen.
- *	By default PS1 = "user-name@machine-name:absolute-path-of-current-working-directory$"
- *	The ending character is '$' for a user and a '#' for root.
- */
-char PS1[MAX_PS1_LENGTH];	//PS1 variable of the shell
+/*	Macro function to initialize shell environment	*/
+#define init_shell()	\
+		init_logger();	\
+		init_history();	\
+		init_ps1();	\
+		RESET_ALL_FLAGS();	\
+		
 
-/*
+
+
+/*************************
  * Function declarations
+ *************************
  */
 void init_ps1();	//Initialize ps1 variable
 
@@ -94,5 +102,6 @@ char *search_cmd(const char *command);	//Search for a command in each directory 
 //@void chk_cmd_type(cmd_t*, int);	//Check to see if the command is a built-in command or a program
 
 void execute_cmd(cmd_t *cmd, int8_t pipe_count, int8_t bkgnd_count);	//Execution of a command
+
 
 #endif

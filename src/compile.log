@@ -1,4 +1,4 @@
 shell_lib.c: In function ‘tokenize_cmd’:
-shell_lib.c:145:2: warning: return from incompatible pointer type [enabled by default]
+shell_lib.c:154:2: warning: return from incompatible pointer type [enabled by default]
   return counts;
   ^

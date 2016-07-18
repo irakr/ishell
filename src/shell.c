@@ -43,7 +43,9 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include "flags.h"
 #include "shell_lib.h"
+#include "environ.h"
 
 FILE *log_file;	//Every actions will be logged in this file.
 FILE *history;	//File that stores the history of commands executed till date.
@@ -105,7 +107,7 @@ int main(void){
 		assert_exit(input_cmd);
 		
 		//Parse input command if it is not one of the in-built command.
-		if(parse_cmd(input_cmd,&command_info) == -1){
+		if(parse_cmd(input_cmd, &command_info) == -1){
 			fprintf(stderr,"Shell Error: Error while parsing the command.\n");
 			continue;
 		}

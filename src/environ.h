@@ -25,8 +25,23 @@
  * For more information, please refer to <http://unlicense.org>
  */
  
-/*
+/* ************************************************************************************
  * environ.h
  *
  * This file contains shell environment variables just like we see any other shell.
+ * ************************************************************************************
  */
+ 
+#ifndef ENVIRON_H_
+#define ENVIRON_H_
+
+/*
+ *	PS1 is the string that will be displayed as the prompt screen.
+ *	By default PS1 = "user-name@machine-name:absolute-path-of-current-working-directory$"
+ *	The ending character is '$' for a user and a '#' for root.
+ */
+char PS1[MAX_PS1_LENGTH];	//PS1 variable of the shell
+
+
+
+#endif
