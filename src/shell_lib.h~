@@ -90,7 +90,7 @@ void change_ps1(const char *username,const char *machinename);	//Change value of
 
 inline void assert_exit(char *cmd);	//Check if the input command is 'exit'.
 
-void identify_cmd_type(cmd_t *cmd, int n);	//Identify type of command(INBUILT_CMD or REGULAR_CMD)
+void identify_cmd_type(cmd_t *cmd);	//Identify type of command(INBUILT_CMD or REGULAR_CMD)
 
 int parse_cmd(char *command, info_cmd *cmd_info);	//Parse command
 

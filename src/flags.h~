@@ -73,7 +73,7 @@ typedef uint32_t cmdtype_t;
 #define INBUILT		(INBUILT_CMD)
 #define PIPE_BK		(PIPED_CMD | BKGROUND_CMD)
 
-//For checking whether the flag determined by 'c' atleast holds any significant flags using masks
+//For checking whether the flag determined by 'c' atleast holds any significant flag using masks
 #define IS_ATLEAST_PIPE(c)		((c & 0x000000f0)==0x010)
 #define IS_ATLEAST_BKGROUND(c)		((c & 0x0000000f)==0x001)
 #define IS_PRE_PIPE(c)			((c & 0x0000000f)==0x007)

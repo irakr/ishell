@@ -170,7 +170,7 @@ int (*tokenize_cmd(char *cmd,char *tokens[MAX_TOKENS])) [3] {
 	return counts;
 }
 
-//Identify command type for individual commands pointed to by *commands 
+//Identify type of commands
 void identify_cmd_type(cmd_t *commands, int n){
 	//n = No of cmd_t structs
 	int i;

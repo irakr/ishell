@@ -47,4 +47,4 @@ Tue Jul 19 22:54:35 IST 2016
 - Added new flag values. See flags.h
 - Added new member 'argc' to the 'cmd_t' struct for storing the no of arguments for an individual command.
 - Modified parse_cmd(): The portion where each individual commands are extracted.
-- Modified identify_cmd_type(): 
+- Modified identify_cmd_type():

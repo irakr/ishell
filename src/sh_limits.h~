@@ -40,7 +40,7 @@
 #define MAX_TOKENS 50
 
 //Maximum no of arguments to a command
-#define MAX_ARGS 100
+#define MAX_ARGS 10
 
 //Maximum no. of combined or piped commands
 //Eg of combined commands: $ sudo fdisk -l;	where 'sudo' and 'fdisk' are separate commands.
