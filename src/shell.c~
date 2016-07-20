@@ -112,7 +112,7 @@ int main(void){
 			continue;
 		}
 		
-		display_command_info(&command_info);
+		display_cmd_info(&command_info);
 		
 		//@manage_execution();
 		

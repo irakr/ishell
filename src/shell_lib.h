@@ -67,6 +67,7 @@ typedef struct{
 	uint8_t ntokens;	//No of tokens in the command
 	uint8_t npipes;		//No of piped commands
 	uint8_t nbkgnds;	//No of background instructed commands
+	uint8_t ncommands;	//No of commands
 	cmd_t *cmd_ptr;		//Pointer to a variable size array of cmd_t structs where each element(struct) holds a command and its arguments.
 } info_cmd;
 
@@ -94,7 +95,7 @@ void identify_cmd_type(cmd_t *cmd, int n);	//Identify type of command(INBUILT_CM
 
 int parse_cmd(char *command, info_cmd *cmd_info);	//Parse command
 
-int (*tokenize_cmd(char *cmd,char *tokens[MAX_TOKENS])) [3] ;	//Tokenize user command
+int (*tokenize_cmd(char *cmd,char *tokens[MAX_TOKENS])) [4] ;	//Tokenize user command
 
 void resolve_cmd_path(cmd_t **);	//Resolve full pathname for the command
 
@@ -102,7 +103,7 @@ char *search_cmd(const char *command);	//Search for a command in each directory 
 
 //@void chk_cmd_type(cmd_t*, int);	//Check to see if the command is a built-in command or a program
 
-void execute_cmd(cmd_t *cmd, int8_t pipe_count, int8_t bkgnd_count);	//Execution of a command
+void display_command_info(info_cmd *cmd_info);	//Display command infos
 
 
 #endif

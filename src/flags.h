@@ -54,7 +54,7 @@ typedef uint32_t cmdtype_t;
 #define PIPED_CMD	0x00000010
 #define BKGROUND_CMD	0x00000001
 #define NONE		0x00000000
-#define IGNORE		NONE
+#define IGNORE		0x10000000
 
 /*
  * ---- Special macro values ----
@@ -66,12 +66,16 @@ typedef uint32_t cmdtype_t;
 #define POST_PIPE	0x00000070
 
 //Macros for composite flags instead of writing OR operations explicitly. This is especially helpful in deciding execution type for a command.
-#define REG_SINGLE	(REGULAR_CMD | SINGLE_CMD)
-#define REG_PIPED	(REGULAR_CMD | PIPED_CMD)
-#define REG_BKGROUND	(REGULAR_CMD | BKGROUND_CMD)
-#define INBUILT_SINGLE	(INBUILT | SINGLE_CMD)
-#define INBUILT		(INBUILT_CMD)
-#define PIPE_BK		(PIPED_CMD | BKGROUND_CMD)
+#define REG_SINGLE		(REGULAR_CMD | SINGLE_CMD)
+#define REG_PIPED		(REGULAR_CMD | PIPED_CMD)
+#define REG_BKGROUND		(REGULAR_CMD | BKGROUND_CMD)
+#define INBUILT_SINGLE		(INBUILT | SINGLE_CMD)
+#define INBUILT			(INBUILT_CMD)
+#define PIPE_BK			(PIPED_CMD | BKGROUND_CMD)
+#define REG_PREPIPE		(REGULAR_CMD | PRE_PIPE)
+#define REG_POSTPIPE		(REGULAR_CMD | POST_PIPE)
+#define REG_PREPOST_PIPE	(REGULAR_CMD | PRE_PIPE | POST_PIPE)
+#define REG_BK_POSTPIPE		(REG_BKGROUND | POST_PIPE)
 
 //For checking whether the flag determined by 'c' atleast holds any significant flags using masks
 #define IS_ATLEAST_PIPE(c)		((c & 0x000000f0)==0x010)

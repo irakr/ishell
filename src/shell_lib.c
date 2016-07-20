@@ -44,7 +44,7 @@
 int parse_cmd(char *original_command, info_cmd *cmd_info){
 	
 	char *tokens[MAX_TOKENS];	//Tokens of a command
-	int (*counts)[3];	//No of tokens(counts[0]), pipes(counts[1]) '|' and background(counts[2]) '&' 
+	int (*counts)[4];	//Go over to (*tokenize_cmd())[4] and find out what this array represents.
 	int i, j, k;
 	
 	char *command = (char*)calloc(strlen(original_command)+1, sizeof(char));
@@ -79,6 +79,7 @@ int parse_cmd(char *original_command, info_cmd *cmd_info){
 	cmd_info->ntokens = (*counts)[0];
 	cmd_info->npipes = (*counts)[1];
 	cmd_info->nbkgnds = (*counts)[2];
+	cmd_info->ncommands = (*counts)[3];
 	
 	/* TODO...First release memory from the argument 'cmd_t *cmd_ptr' for processing the next command,
 	 * if it is already assigned some address(maybe for the previous command).
@@ -114,11 +115,11 @@ int parse_cmd(char *original_command, info_cmd *cmd_info){
 		 
 		// If current token is either '|' or '&&' and the immediate next token is not null,
 		// then take that next token as the next command-name.
-		if( ( (strcmp(tokens[i], "|")==0) || (strcmp(tokens[i], "&&")==0) ) && (tokens[i+1]!=(char*)0) ){
+		if( ( (strcmp(tokens[i], "|")==0) || (strcmp(tokens[i], "&")==0) ) && (tokens[i+1]!=(char*)0) ){
 			cmd_info->cmd_ptr[j].args[k] = tokens[i];
+			cmd_info->cmd_ptr[j].argc = k+1;
 			j++;
 			cmd_info->cmd_ptr[j].cmd_name = tokens[++i];
-			cmd_info->cmd_ptr[j].argc = k+1;
 			k=0;
 		}
 		else{	//Otherwise consider the token as an argument
@@ -143,26 +144,37 @@ int parse_cmd(char *original_command, info_cmd *cmd_info){
 
 //Break the command 'cmd' into individual tokens(a WHITESPACE as a delimiter) and store it in 'tokens'
 //Returns the no. of tokens, pipes and background commands.
-int (*tokenize_cmd(char *cmd,char *tokens[MAX_TOKENS])) [3] {
+int (*tokenize_cmd(char *cmd, char *tokens[MAX_TOKENS])) [4] {
 	//char *tokens[MAX_TOKENS] = {NULL};	//Pointers to each tokens of a command
 	int i=1;
-	static int counts[3]={0,0,0};
+	static int counts[4];
 	//counts[0]->token_count
 	//counts[1]->pipe_count('|')
 	//counts[2]->background_count('&')
+	//counts[3]->no of commands
+	
+	//Should always be set to 0. Otherwise previous values will retain and cause invalid results.
+	int c;
+	for(c=0; c<4; c++)
+		counts[c] = 0;
 	
 	if(is_null(cmd)){
 		return NULL;
 	}
 	tokens[0] = strtok(cmd," ");	//Get each token w.r.t. white spaces
+	counts[3]++;	//1st command marked
 	for(; i<MAX_TOKENS; i++){
 		tokens[i] = strtok(NULL," ");
 		if(tokens[i] == NULL)
 			break;
-		else if(strcmp(tokens[i],"|") == 0)	//Pipe operator encountered
+		else if(strcmp(tokens[i],"|") == 0){	//Pipe operator encountered
 			counts[1]++;
-		else if(strcmp(tokens[i],"&") == 0)	//Background operator encountered
+			counts[3]++;
+		}
+		else if(strcmp(tokens[i],"&") == 0){	//Background operator encountered
 			counts[2]++;
+			counts[3]++;
+		}
 	}
 	if(i >= MAX_TOKENS)	//Too many tokens in command
 		return NULL;
@@ -260,29 +272,83 @@ char *search_cmd(const char *command){
 			}		\
 			wait(&child_err_code);
 
-void execute_cmd(cmd_t *cmd, int8_t pipe_count, int8_t bkgnd_count){
+//Displays the command infos. Useful for debugging.
+void display_command_info(info_cmd *cmd_info){
 	
-	//Act according to command type
+	printf("No. of tokens: %d\n", cmd_info->ntokens);
+	printf("No. of pipe operators '|': %d\n", cmd_info->npipes);
+	printf("No. of background operators '&': %d\n", cmd_info->nbkgnds);
+	printf("No. of commands: %d\n\n", cmd_info->ncommands);
+	
+	//Global command type flag
+	printf("Original command type: ");
 	switch (cmd_type){
 		case REG_SINGLE:
-			printf("INFO: Command type = REGULAR AND SINGLE\n");
+			printf("REGULAR AND SINGLE\n");
 			break;
 		case REG_PIPED:
-			printf("INFO: Command type = REGULAR AND PIPED\n");
+			printf("REGULAR AND PIPED\n");
 			break;
 		case REG_BKGROUND:
-			printf("INFO: Command type = REGULAR AND BKGROUND\n");
+			printf("REGULAR AND BKGROUND\n");
 			break;
 		case INBUILT_SINGLE:
-			printf("INFO: Command type = INBUILT AND SINGLE\n");
+			printf("INBUILT AND SINGLE\n");
 			break;
 		case INBUILT:
-			printf("INFO: Command type = INBUILT\n");
+			printf("INBUILT\n");
 			break;
+		case IGNORE:
+			printf("IGNORED\n");
+			break;
+		case PIPE_BK:
+			printf("PIPED and BKGROUND\n");
+			break;
+		case PRE_PIPE:
+			printf("IGNORED\n");
+			break;
+		case REG_PREPIPE:
+			printf("REGULAR and PRE_PIPE\n");
+			break;
+		case REG_POSTPIPE:
+			printf("REGULAR and POSTPIPE\n");
+			break;
+
 		default:	//Invalid type. Discard the command and prompt for next command
-			fprintf(stderr,"INFO: Command = INVALID\n");
+			fprintf(stderr,"INVALID\n");
 	}
-	
+	printf("\n");
+	//Individual command types
+	int i;
+	for(i=0; i<cmd_info->ncommands; i++){
+		printf("Command[%d] type: ", i);
+		switch (cmd_info->cmd_ptr[i].type){
+			case INBUILT:
+				printf("INBUILT");
+				break;
+			case REGULAR_CMD:
+				printf("REGULAR");
+				break;
+			case REG_BKGROUND:
+				printf("REGULAR and BKGROUND");
+				break;
+			case REG_PREPIPE:
+				printf("REGULAR and PREPIPE");
+				break;
+			case REG_POSTPIPE:
+				printf("REGULAR and POSTPIPE");
+				break;
+			case REG_PREPOST_PIPE:
+				printf("REGULAR, PREPIPE and POSTPIPE");
+				break;
+			case REG_BK_POSTPIPE:
+				printf("REGULAR, BKGROUND and POSTPIPE");
+				break;
+			default:
+				printf("INVALID");
+		}
+		printf("\n");
+	}
 }
 
 
