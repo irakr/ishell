@@ -114,7 +114,7 @@ int main(void){
 		
 		display_command_info(&command_info);
 		
-		//@manage_execution();
+		manage_execution(&command_info);
 		
 		//TODO.....Latest work!!!!!!!!!! Starts here!!!!!!!!!
 		//Resolve full pathnames for each command parsed.

@@ -102,6 +102,6 @@ char *search_cmd(const char *command);	//Search for a command in each directory 
 
 void display_command_info(info_cmd *cmd_info);	//Display command infos
 
-int manage_execution(info_cmd *target);	//Initiate procedures that will execute the command
+int manage_execution(info_cmd *cmd_info);	//Initiate procedures that will execute the command
 
 #endif

@@ -344,6 +344,9 @@ void display_command_info(info_cmd *cmd_info){
 			case REG_BK_POSTPIPE:
 				printf("REGULAR, BKGROUND and POSTPIPE");
 				break;
+			case NONE:
+				printf("NONE");
+				break;
 			default:
 				printf("INVALID");
 		}
@@ -380,4 +383,9 @@ void change_ps1(const char *user,const char *machinename){
 	else{	//For user directed change(If the user entered the command :	$PS1=<some-string>)
 		strcpy(PS1,user);
 	}
+}
+
+//Manage the execution procedure
+int manage_execution(info_cmd *target){
+	return 0;
 }

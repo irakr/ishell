@@ -45,7 +45,7 @@
 #include <sys/wait.h>
 #include "flags.h"
 #include "shell_lib.h"
-#include "environ.h"
+#include "environment.h"
 
 FILE *log_file;	//Every actions will be logged in this file.
 FILE *history;	//File that stores the history of commands executed till date.

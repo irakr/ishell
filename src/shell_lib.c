@@ -384,3 +384,9 @@ void change_ps1(const char *user,const char *machinename){
 		strcpy(PS1,user);
 	}
 }
+
+//Manage the execution procedure
+int manage_execution(info_cmd *target){
+	//TODO
+	return 0;
+}
