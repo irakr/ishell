@@ -1,1 +1,0 @@
-/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/irakr/ns-allinone-2.35/xgraph-12.2/:/home/irakr/ns-allinone-2.35/bin/:/home/irakr/ns-allinone-2.35/tcl8.5.10/unix/:/home/irakr/ns-allinone-2.35/tk8.5.10/unix/:/home/irakr/ns-allinone-2.35/ns-2.35/:/home/irakr/ns-allinone-2.35/nam-1.15/

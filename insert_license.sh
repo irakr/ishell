@@ -1,5 +1,14 @@
 #!/bin/bash
-#This shell script inserts the license text at the beginning of each files passed as arguments.
+
+######### Insert license #########
+#
+# Written by: Irak Rigia
+# Date: 14th July 2016
+#################################
+#
+# This shell script inserts the license text from the file LICENSE.comment to the beginning of each source/header
+# files passed as arguments to the script.
+# 
 
 #Storing arguments
 args=("$@")

@@ -1,0 +1,23 @@
+------------------ INSERT LICENSE ------------------
+
+Guidelines for 'insert_license' script:
+--------------------------------------------
+- The main objective of this script is to insert the license text(header
+  comments) to the source/header files without letting the developer/programmer   copy and paste it in each new source/header file being created.
+
+- Another advantage for the use of this script is when the programmer
+  forgets to put the license text while creating a new source/header file,
+  in which case the programmer doesn't have to put the license text later
+  manually.
+
+- There is nothing complex to do for using this script. Just remember the
+  following points:
+  1. The file LICENSE.comment must be available and must be in the same
+     directory as the script.
+  2. The content of LICENSE.comment is nothing but the license text.
+  3. Run the script by passing the source/header filenames as the arguments.
+
+NOTE: Currently this script works only for C/C++ type of header comments.
+      So kindly note that you cannot use this script for programming languages
+      that uses comment syntaxes other than C/C++, C#, or Java.
+      Don't worry!!! This will be solved soon.

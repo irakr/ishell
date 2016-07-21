@@ -344,9 +344,6 @@ void display_command_info(info_cmd *cmd_info){
 			case REG_BK_POSTPIPE:
 				printf("REGULAR, BKGROUND and POSTPIPE");
 				break;
-			case NONE:
-				printf("NONE");
-				break;
 			default:
 				printf("INVALID");
 		}
