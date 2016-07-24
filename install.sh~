@@ -1,0 +1,19 @@
+#!/bin/bash
+
+############## Installation script ###############
+
+sudo -i
+
+#Perform makefile operations and other compilation processes
+echo "Configuring..."
+cd src/
+make
+cd ..
+echo "SUCCESS"
+
+#Install to the system
+echo "Installing..."
+cp -rf bin/ishell /usr/sbin/
+echo "SUCCESS"
+
+logout
