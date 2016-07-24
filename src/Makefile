@@ -4,6 +4,9 @@
 CC=gcc
 CFLAGS=-c -Wall
 
+#Debug flag
+GDB=-g
+
 #Special directory variables for . and ..
 CURRENT_DIR=./
 PREVIOUS_DIR=../
@@ -15,20 +18,19 @@ BIN_DIR=$(PREVIOUS_DIR)bin/
 #Variables that stores pathnames of each source files
 SHELL_C=$(SRC_DIR)shell.c
 SHELL_LIB_C=$(SRC_DIR)shell_lib.c
+ENVIRONMENT_C=$(SRC_DIR)environment.c
 
 #Variables that stores pathnames of object programs for each source files
 SHELL_O=$(SRC_DIR)shell.o
 SHELL_LIB_O=$(SRC_DIR)shell_lib.o
-ALL_OBJECTS=$(SHELL_O) $(SHELL_LIB_O)
+ENVIRONMENT_O=$(SRC_DIR)environment.o
+ALL_OBJECTS=$(SHELL_O) $(SHELL_LIB_O) $(ENVIRONMENT_O)
 
 #Pathname of the file executable file
 ISHELL=$(BIN_DIR)ishell
 
-#Debug flag
-DEBUG=-g
-
 #The main target
-$(ISHELL):	$(SHELL_O) $(SHELL_LIB_O)
+$(ISHELL):	$(SHELL_O) $(SHELL_LIB_O) $(ENVIRONMENT_O)
 	$(CC) $(SHELL_O) $(SHELL_LIB_O) -o $(ISHELL)
 
 $(SHELL_O):	$(SHELL_C)
@@ -37,5 +39,13 @@ $(SHELL_O):	$(SHELL_C)
 $(SHELL_LIB_O):	$(SHELL_LIB_C)
 	$(CC) $(CFLAGS) $(SHELL_LIB_C) -o $(SHELL_LIB_O)
 
+$(ENVIRONMENT_O):	$(ENVIRONMENT_C)
+	$(CC) $(CFLAGS) $(ENVIRONMENT_C) -o $(ENVIRONMENT_O)
+
+#For debugging purpose
+debug:
+	$(CC) $(GDB) $(ENVIRONMENT_C) $(SHELL_LIB_C) $(SHELL_C) -o ishell
+
 clean:
 	-rm -rf $(ALL_OBJECTS)
+	-rm -rf *~

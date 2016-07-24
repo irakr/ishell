@@ -1,0 +1,38 @@
+# This file contains explaination of some of the code snippets in the software that is not easily understandable.
+# In each of the source files of the software, there are some comments with the character sequence //%
+# The codes indicated by those comments are explained in detail here.
+# This file follows a format: The text between '%X Snippet begins' and '%X Snippet ends' is the portion of the code copied from
+# the source file. The X being the snippet number in the particular function indicated in the format-
+#	1) Function: func_name()
+# The explanation of the code is written in between '%X Snippet ends' and '%X Ends'
+#
+#	WELL GOOD LUCK IN READING THIS FILE!!!!!!!!!
+#
+
+
+
+1) Function: identify_cmd_type()
+
+%1 Snippet Begins
+if(
+	(commands[i].cmd_name == NULL)
+&&	((i > 0) ? IS_ATLEAST_PRE_PIPE(commands[i-1].type) : 0)
+)
+{
+	cmd_type |= INCOMPLETE_CMD;
+	break;
+}
+%1 Snippet Ends
+
+Firstly, the syntax of if-statement used here is splitted into different lines which is allowed in C. This provides better readability, and
+so I used it so that it would be easier to understand.
+Now, the important thing here is-
+- In this if statement, there are two main conditions which are ANDed against each other.
+- The first condition is a simple one, i.e. (commands[i].cmd_name==NULL), which checks whether commands[i].cmd_name is pointing to NULL.
+- The second condition is a bit messy. It is itself a conditional statement which is called a ternary conditional operator in C. I hope you know
+  that. But that's not important. What's important is the reason for it and the logic behind it. The logic is that, if i>0 then will the
+  IS_ATLEAST_PRE_PIPE() macro will work and the condition of the whole if statement will work accordingly. But if i=0 then the portion
+  commands[i-1].type will produce commands[-1].type which will produce unwanted result and may also cause SEGSEGV(Seg-fault) bug.
+  This is why I used that logic. And the reason behind it is that it is done in a single line(BOOM!!!)
+
+%1 Ends

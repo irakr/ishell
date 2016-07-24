@@ -26,33 +26,19 @@
  */
 
 /*
- *	environment.c
+ * basic_utilities.h
  *
- *	This module manages the environment of the shell.
+ * This file contains some macros for very basic but important functionalities. For eg: Checking for a NULL value, etc...
  */
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include "environment.h"
-#include "basic_utilities.h"
 
-//Displays all the environment variables in the variable 'extern char **environ', unless specified explicitly in 'char *name'
-void print_environ(char *name){
-	
-	//Print everything in **environ if name==NULL
-	if(name==(char*)0){
-		char **ptr;
-		for(ptr=environ; *ptr; ptr++)
-			printf("%s\n", *ptr);
-		return;
-	}
+#if !defined(BASIC_UTILITIES_H)
+#define BASIC_UTILITIES_H
 
-	//Otherwise print for specific variable in 'name'
-	char *value;	
-	if(!(value=getenv(name))){
-		fprintf(stderr,"Error (In file %s:%d): The environment variable %s not found.\n", __FILE__, __LINE__, name);
-		return;
-	}
-	printf("%s=%s\n", name, value);
-}
+#define is_null(str)	((str==(char*)0) || (str[0]=='\0'))		
+
+//Input stream flusher
+#define flush_stdin() 	int input = getchar();			\
+			while(input!='\n' && input!=EOF) 	input=getchar();
+
+
+#endif	//BASIC_UTILITIES_H

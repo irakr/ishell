@@ -46,6 +46,7 @@
 #include "flags.h"
 #include "shell_lib.h"
 #include "environment.h"
+#include "basic_utilities.h"
 
 FILE *log_file;	//Every actions will be logged in this file.
 FILE *history;	//File that stores the history of commands executed till date.
@@ -112,9 +113,15 @@ int main(void){
 			continue;
 		}
 		
-		display_command_info(&command_info);
+		//display_command_info(&command_info);
 		
-		manage_execution(&command_info);
+		//TEST...
+		//print_environ("PATH");
+		
+		if(manage_execution(&command_info) == -1){
+			fprintf(stderr,"Shell Error: Command execution failed!");
+			continue;
+		}
 		
 		//TODO.....Latest work!!!!!!!!!! Starts here!!!!!!!!!
 		//Resolve full pathnames for each command parsed.

@@ -55,6 +55,7 @@ typedef uint32_t cmdtype_t;
 #define BKGROUND_CMD	0x00000001
 #define NONE		0x00000000
 #define IGNORE		0x10000000
+#define INCOMPLETE_CMD	0x01000000	//This is a special flag that indicates that the current command has not yet completed
 
 /*
  * ---- Special macro values ----
@@ -76,12 +77,15 @@ typedef uint32_t cmdtype_t;
 #define REG_POSTPIPE		(REGULAR_CMD | POST_PIPE)
 #define REG_PREPOST_PIPE	(REGULAR_CMD | PRE_PIPE | POST_PIPE)
 #define REG_BK_POSTPIPE		(REG_BKGROUND | POST_PIPE)
+#define REG_INCOMPLETE		(REG_PIPED | INCOMPLETE_CMD)
 
 //For checking whether the flag determined by 'c' atleast holds any significant flags using masks
-#define IS_ATLEAST_PIPE(c)		((c & 0x000000f0)==0x010)
-#define IS_ATLEAST_BKGROUND(c)		((c & 0x0000000f)==0x001)
-#define IS_PRE_PIPE(c)			((c & 0x0000000f)==0x007)
-#define IS_POST_PIPE(c)			((c & 0x000000f0)==0x070)
+#define IS_ATLEAST_PIPE(c)		(c & 0x000000f0)
+#define IS_ATLEAST_BKGROUND(c)		(c & 0x0000000f)
+#define IS_ATLEAST_PRE_PIPE(c)		((c & 0x0000000f) == 0x07)
+#define IS_ATLEAST_POST_PIPE(c)		((c & 0x000000f0) == 0x070)
+#define IS_ATLEAST_REG(c)		(c & 0x000f0000)
+#define IS_ATLEAST_INBUILT(c)		(c & 0x0000f000)
 
 /*
  *	USAGE OF THIS FLAG

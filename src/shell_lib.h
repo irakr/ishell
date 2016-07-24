@@ -41,12 +41,6 @@
 #ifndef SHELL_LIB_H_
 #define SHELL_LIB_H_
 
-#define is_null(str)	((str==(char*)0) || (str[0]=='\0'))		
-
-//Input stream flusher
-#define FLUSH_STDIN() 	int input = getchar();			\
-			while(input!='\n' && input!=EOF);
-
 #include "sh_limits.h"
 #include "flags.h"
 
@@ -94,14 +88,20 @@ int parse_cmd(char *command, info_cmd *cmd_info);	//Parse command
 
 int (*tokenize_cmd(char *cmd,char *tokens[MAX_TOKENS])) [4] ;	//Tokenize user command
 
-void resolve_cmd_path(cmd_t **);	//Resolve full pathname for the command
+int resolve_cmd_path(cmd_t *cmd_ptr);	//Resolve full pathname for the command
 
-char *search_cmd(const char *command);	//Search for a command in each directory defined by the PATH variable
+char *search_cmd_in_path(const char *command);	//Search for a command in each directory defined by the PATH variable
 
 //@void chk_cmd_type(cmd_t*, int);	//Check to see if the command is a built-in command or a program
 
 void display_command_info(info_cmd *cmd_info);	//Display command infos
 
 int manage_execution(info_cmd *target);	//Initiate procedures that will execute the command
+
+void execute_regular(info_cmd *target);		//Execution of regular commands
+
+void execute_inbuilt(info_cmd *target);		//Execution of inbuilt commands
+
+inline void fork_exec(cmd_t cmd);		//Simple fork and exec code
 
 #endif

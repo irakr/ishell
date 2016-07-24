@@ -35,6 +35,8 @@
 #ifndef ENVIRON_H_
 #define ENVIRON_H_
 
+#include "sh_limits.h"
+
 /*
  *	PS1 is the string that will be displayed as the prompt screen.
  *	By default PS1 = "user-name@machine-name:absolute-path-of-current-working-directory$"
@@ -42,6 +44,14 @@
  */
 char PS1[MAX_PS1_LENGTH];	//PS1 variable of the shell
 
+extern char **environ;
 
+/*
+ ******************************
+ * Function declarations      *
+ ******************************
+ */
+//Displays all the environment variables in the variable 'extern char **environ', unless specified explicitly in 'char *name'
+void print_environ(char *name);
 
 #endif
