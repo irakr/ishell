@@ -32,10 +32,10 @@
  *	of commands and behaviour of the shell itself according to different commands.
  */
 
-#include <stdint.h>
-
 #ifndef FLAGS_H_
 #define FLAGS_H_
+
+#include <stdint.h>
 
 //Error flags. Default=NONE.
 typedef enum{NOERROR=0, INVAL_CMD=100, _2LONG_CMD, NOTRESOLVED_CMD, INVAL_OP} error_t;

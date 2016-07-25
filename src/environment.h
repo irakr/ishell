@@ -32,10 +32,12 @@
  * ************************************************************************************
  */
  
+#include "shell_lib.h"
+//#include "flags.h"
+#include "sh_limits.h"
+
 #ifndef ENVIRON_H_
 #define ENVIRON_H_
-
-#include "sh_limits.h"
 
 /*
  *	PS1 is the string that will be displayed as the prompt screen.
@@ -45,6 +47,13 @@
 char PS1[MAX_PS1_LENGTH];	//PS1 variable of the shell
 
 extern char **environ;
+
+/*	Fixed-valued list of inbuilt commands with there valid arguments
+const cmd_t inbuilt_cmds[] =
+{
+	{ .cmd_name="cd", .args={".", "..", "-", "~"}, .type=INBUILT_CMD}
+};
+*/
 
 /*
  ******************************

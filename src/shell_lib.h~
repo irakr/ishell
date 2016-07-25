@@ -38,12 +38,11 @@
  *	WARNING: (NOT FULLY IMPLEMENTED YET) May cause segmentation-fault. Not sure!
  */
 
+#ifndef SHELL_LIB_H_
+#define SHELL_LIB_H_
 
 #include "sh_limits.h"
 #include "flags.h"
-
-#ifndef SHELL_LIB_H_
-#define SHELL_LIB_H_
 
 /**************************************
  * Data structures used by the shell  *

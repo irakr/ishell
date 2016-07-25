@@ -470,7 +470,7 @@ void execute_regular(info_cmd *target){
 		if(resolve_cmd_path(cmd_ptr+i) == -1){
 			//---------------- LOGGING ---------------------
 			eflag[i] = NOTRESOLVED_CMD;
-			fprintf(stderr, "Shell Error: Invalid command '%s'\n", cmd_ptr[i].cmd_name);
+			fprintf(stderr, "Shell Error: Invalid command '%s'\n", cmd_ptr[i]->cmd_name);
 		}
 	}
 	

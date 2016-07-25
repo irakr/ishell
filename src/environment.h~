@@ -24,37 +24,42 @@
 
  * For more information, please refer to <http://unlicense.org>
  */
+ 
+/* ************************************************************************************
+ * environ.h
+ *
+ * This file contains shell environment variables just like we see any other shell.
+ * ************************************************************************************
+ */
+ 
+#include "shell_lib.h"
+//#include "flags.h"
+#include "sh_limits.h"
+
+#ifndef ENVIRON_H_
+#define ENVIRON_H_
 
 /*
- *	environment.c
- *
- *	This module manages the environment of the shell.
+ *	PS1 is the string that will be displayed as the prompt screen.
+ *	By default PS1 = "user-name@machine-name:absolute-path-of-current-working-directory$"
+ *	The ending character is '$' for a user and a '#' for root.
  */
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include "environment.h"
-#include "shell_lib.h"
-#include "flags.h"
-#include "basic_utilities.h"
+char PS1[MAX_PS1_LENGTH];	//PS1 variable of the shell
 
+extern char **environ;
+
+/*	Fixed-valued list of inbuilt commands with there valid arguments
+const cmd_t inbuilt_cmds[] =
+{
+	{ .cmd_name="cd", .args={".", "..", "-", "~"}, .type=INBUILT_CMD}
+};
+*/
+/*
+ ******************************
+ * Function declarations      *
+ ******************************
+ */
 //Displays all the environment variables in the variable 'extern char **environ', unless specified explicitly in 'char *name'
-void print_environ(char *name){
-	
-	//Print everything in **environ if name==NULL
-	if(name==(char*)0){
-		char **ptr;
-		for(ptr=environ; *ptr; ptr++)
-			printf("%s\n", *ptr);
-		return;
-	}
+void print_environ(char *name);
 
-	//Otherwise print for specific variable in 'name'
-	char *value;	
-	if(!(value=getenv(name))){
-		fprintf(stderr,"Error (In file %s:%d): The environment variable %s not found.\n", __FILE__, __LINE__, name);
-		return;
-	}
-	printf("%s=%s\n", name, value);
-}
+#endif
