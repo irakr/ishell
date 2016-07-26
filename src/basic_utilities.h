@@ -34,7 +34,7 @@
 #if !defined(BASIC_UTILITIES_H)
 #define BASIC_UTILITIES_H
 
-#define is_null(str)	((str==(char*)0) || (str[0]=='\0'))		
+#define is_null(str)	((str==NULL) || (str[0]=='\0'))		
 
 //Input stream flusher
 #define flush_stdin() 	int input = getchar();			\

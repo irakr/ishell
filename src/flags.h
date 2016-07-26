@@ -80,12 +80,12 @@ typedef uint32_t cmdtype_t;
 #define REG_INCOMPLETE		(REG_PIPED | INCOMPLETE_CMD)
 
 //For checking whether the flag determined by 'c' atleast holds any significant flags using masks
-#define IS_ATLEAST_PIPE(c)		(c & 0x000000f0)
-#define IS_ATLEAST_BKGROUND(c)		(c & 0x0000000f)
-#define IS_ATLEAST_PRE_PIPE(c)		((c & 0x0000000f) == 0x07)
-#define IS_ATLEAST_POST_PIPE(c)		((c & 0x000000f0) == 0x070)
-#define IS_ATLEAST_REG(c)		(c & 0x000f0000)
-#define IS_ATLEAST_INBUILT(c)		(c & 0x0000f000)
+#define IS_ATLEAST_PIPE(c)		((c) & 0x000000f0)
+#define IS_ATLEAST_BKGROUND(c)		((c) & 0x0000000f)
+#define IS_ATLEAST_PRE_PIPE(c)		(((c) & 0x0000000f) == 0x07)
+#define IS_ATLEAST_POST_PIPE(c)		(((c) & 0x000000f0) == 0x070)
+#define IS_ATLEAST_REG(c)		((c) & 0x000f0000)
+#define IS_ATLEAST_INBUILT(c)		((c) & 0x0000f000)
 
 /*
  *	USAGE OF THIS FLAG

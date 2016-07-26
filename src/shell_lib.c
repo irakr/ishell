@@ -238,18 +238,23 @@ inline void assert_exit(char *cmd){
 
 //Search for a command in each directory defined by the PATH variable
 char *search_cmd_in_path(const char *command){
-	/* static */ char PATH[ENV_PATH_SIZE];	//Environment variable PATH
+
+	//Just for safety
+	if(is_null(command))
+		return NULL;
+	
+	char PATH[ENV_PATH_SIZE];	//Environment variable PATH
 	static char cmd[PATH_MAX]="";	//Full pathname of the command that will be searched
 	FILE *cmd_file;		//File that will try to open the filename in 'cmd' to verify whether the file is in that directory
 
-	if(strcpy(PATH,getenv("PATH")) == NULL){	//This will get the value of environment variable PATH
+	if(strcpy(PATH,getenv("PATH")) == NULL){	//TODO...This will get the value of environment variable PATH
 		return NULL;	//if PATH environment var is empty by any chance
 	}
 	//Try to open the command file using each directories defined in PATH variable. If openning with anyone of the paths is successful,
 	//it means the file is located there. Then update the original 'command' argument with the complete pathname.
 	strcpy(cmd,strtok(PATH,":"));
 
-	strcat(strcat(cmd,"/"),command);	//Eg: /usr/bin/ls....TODO...Caution: This may be a bug in the future.[DONE]
+	strcat(strcat(cmd,"/"),command);	//Eg: /bin/ls....TODO...Caution: This may be a bug in the future.[DONE]
 	if((cmd_file=fopen(cmd,"r"))){
 		fclose(cmd_file);
 		return cmd;
@@ -271,7 +276,7 @@ int resolve_cmd_path(cmd_t *cmd_ptr){
 	char *temp_buff;
 	
 	//Search in the PATH environment variable
-	if((temp_buff=search_cmd_in_path(cmd_ptr->cmd_name))){
+	if((temp_buff=search_cmd_in_path((*cmd_ptr).cmd_name))){
 		cmd_ptr->cmd_name = temp_buff;	//If bug then try strcpy()
 		return 0;
 	}
@@ -403,18 +408,16 @@ int manage_execution(info_cmd *target){
 		execute_regular(target);
 	}
 	else if(IS_ATLEAST_INBUILT(cmd_type)){
-		//Execute procedure for inbuilt commands...cd
+		//Execdeclaring global variables as static in cute procedure for inbuilt commands...cd
 		execute_inbuilt(target);
 	}
-	else	//Invalid command type
+	//Ignored command type
+	else if(cmd_type == IGNORE)
 		return -1;	
 	return 0;
 }
 
-//Some useful shortcuts
-#define TOKENS 		target->ntokens
-#define PIPES 		target->npipes
-#define BKGNDS		target->nbkgnds
+//Some useful shortcuts(macros)
 #define COMMANDS	target->ncommands
 
 /* Macro for a simple fork-and-exec mechanism. The code section of the parent process is not included since it depends on the type of command.
@@ -429,7 +432,7 @@ int manage_execution(info_cmd *target){
 						fprintf(stderr,"Shell Error: ");		\
 						perror("execv");				\
 						exit(EXIT_FAILURE);	}			\
-					exit(EXIT_SUCCESS);					\
+					/* exit(EXIT_SUCCESS); */				\
 				}
 /*
 //Simple fork and exec code
@@ -450,19 +453,23 @@ inline void fork_exec(cmd_t cmd){
 
 //Execution of regular commands. It handles all the execution situations like piping, backgroun, conditional, etc.
 void execute_regular(info_cmd *target){
+
+	//Just for safety
+	if(target==(info_cmd*)0)
+		return;
+
 	//pid_t cpid;
 	cmd_t *cmd_ptr;
 	//Pipe may be necessary.
 	int pipefd[2], c_exit_status;
 	short i;
+	
 	//Error flag for each individual command
 	error_t eflag[target->ncommands];
 	//Initialize it all to NOERROR
 	for(i=0; i<target->ncommands; i++)
 		eflag[i] = NOERROR;
 
-	if(target==(info_cmd*)0)
-		return;
 	cmd_ptr = target->cmd_ptr;
 	
 	//Resolve the complete pathname of the command.
@@ -470,7 +477,7 @@ void execute_regular(info_cmd *target){
 		if(resolve_cmd_path(cmd_ptr+i) == -1){
 			//---------------- LOGGING ---------------------
 			eflag[i] = NOTRESOLVED_CMD;
-			fprintf(stderr, "Shell Error: Invalid command '%s'\n", cmd_ptr[i].cmd_name);
+			
 		}
 	}
 	
@@ -502,10 +509,15 @@ void execute_regular(info_cmd *target){
 
 //Execution of inbuilt commands.
 void execute_inbuilt(info_cmd *target){
+	cmd_t *cmd_ptr;
+	
+	//Just for safety
+	if(target == NULL)
+		return;
+	
+	cmd_ptr = target->cmd_ptr;
+	
 	
 }
 
-#undef TOKENS
-#undef PIPES
-#undef BKGNDS
 #undef COMMANDS

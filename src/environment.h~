@@ -54,6 +54,7 @@ const cmd_t inbuilt_cmds[] =
 	{ .cmd_name="cd", .args={".", "..", "-", "~"}, .type=INBUILT_CMD}
 };
 */
+
 /*
  ******************************
  * Function declarations      *

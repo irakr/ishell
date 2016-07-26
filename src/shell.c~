@@ -115,7 +115,7 @@ int main(void){
 			continue;
 		}
 		
-		#if DEBUG
+		#ifdef DEBUG
 		display_command_info(&command_info);
 		#endif
 		

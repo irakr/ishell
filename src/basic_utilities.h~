@@ -24,36 +24,21 @@
 
  * For more information, please refer to <http://unlicense.org>
  */
- 
-/* ************************************************************************************
- * environ.h
+
+/*
+ * basic_utilities.h
  *
- * This file contains shell environment variables just like we see any other shell.
- * ************************************************************************************
+ * This file contains some macros for very basic but important functionalities. For eg: Checking for a NULL value, etc...
  */
- 
-#include "shell_lib.h"
-//#include "flags.h"
-#include "sh_limits.h"
 
-#ifndef ENVIRON_H_
-#define ENVIRON_H_
+#if !defined(BASIC_UTILITIES_H)
+#define BASIC_UTILITIES_H
 
-/*
- *	PS1 is the string that will be displayed as the prompt screen.
- *	By default PS1 = "user-name@machine-name:absolute-path-of-current-working-directory$"
- *	The ending character is '$' for a user and a '#' for root.
- */
-char PS1[MAX_PS1_LENGTH];	//PS1 variable of the shell
+#define is_null(str)	((str==NULL || (str[0]=='\0'))		
 
-extern char **environ;
+//Input stream flusher
+#define flush_stdin() 	int input = getchar();			\
+			while(input!='\n' && input!=EOF) 	input=getchar();
 
-/*
- ******************************
- * Function declarations      *
- ******************************
- */
-//Displays all the environment variables in the variable 'extern char **environ', unless specified explicitly in 'char *name'
-void print_environ(char *name);
 
-#endif
+#endif	//BASIC_UTILITIES_H

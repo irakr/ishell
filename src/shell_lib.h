@@ -66,6 +66,17 @@ typedef struct{
 	cmd_t *cmd_ptr;		//Pointer to a variable size array of cmd_t structs where each element(struct) holds a command and its arguments.
 } info_cmd;
 
+
+/*	Fixed-valued list of inbuilt commands with there valid arguments	
+ * .cmd_name is the command name, .args is the collection of valid arguments that the command accepts to be able to run.
+ * .type is just an indication that it is an inbuilt command type(Not so important). Just provides identity.
+ */
+static cmd_t inbuilt_cmds[] =
+{
+	{ .cmd_name="cd", .args={".", "..", "-", "~"}, .type=INBUILT_CMD}
+};
+
+
 /*	Macro function to initialize shell environment	*/
 #define init_shell()	\
 		init_logger();	\
