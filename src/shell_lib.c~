@@ -276,7 +276,7 @@ int resolve_cmd_path(cmd_t *cmd_ptr){
 	char *temp_buff;
 	
 	//Search in the PATH environment variable
-	if((temp_buff=search_cmd_in_path((*cmd_ptr)->cmd_name))){
+	if((temp_buff=search_cmd_in_path((*cmd_ptr).cmd_name))){
 		cmd_ptr->cmd_name = temp_buff;	//If bug then try strcpy()
 		return 0;
 	}

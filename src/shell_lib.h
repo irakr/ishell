@@ -12,9 +12,7 @@
  * of the public at large and to the detriment of our heirs and
  * successors. We intend this dedication to be an overt act of
  * relinquishment in perpetuity of all present and future rights to this
- * software under copyright law.
-
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * software under copyr;IDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
  * IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
@@ -51,7 +49,7 @@
 
 //Data structure to store a command and its arguments.
 typedef struct{
-	char *cmd_name;	//A single component command. Or a command out of all piped commands of the input command.
+	char cmd_name[128];		//Name of a command (Or a command name among all piped commands of the input command).
 	char *args[MAX_ARGS];	//Arguments to the command in 'cmd_name'
 	uint16_t argc;	//No of arguments
 	cmdtype_t type;	//Type of command
@@ -67,7 +65,7 @@ typedef struct{
 } info_cmd;
 
 
-/*	Fixed-valued list of inbuilt commands with there valid arguments	
+/*	Fixed-valued list of inbuilt commands with there valid arguments
  * .cmd_name is the command name, .args is the collection of valid arguments that the command accepts to be able to run.
  * .type is just an indication that it is an inbuilt command type(Not so important). Just provides identity.
  */
@@ -84,9 +82,12 @@ static cmd_t inbuilt_cmds[] =
 		init_ps1();	\
 		RESET_ALL_FLAGS();
 
-/**************************
- * Function declarations  *
- **************************/
+
+/*
+ ****************************
+ * Function declarations	*
+ ****************************
+ */
 
 void init_ps1();	//Initialize ps1 variable
 
@@ -114,6 +115,6 @@ void execute_regular(info_cmd *target);		//Execution of regular commands
 
 void execute_inbuilt(info_cmd *target);		//Execution of inbuilt commands
 
-inline void fork_exec(cmd_t cmd);		//Simple fork and exec code
+inline void fork_exec(cmd_t *cmd);		//Simple fork and exec code
 
 #endif

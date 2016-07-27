@@ -1,0 +1,5 @@
+############## ISHELL ################
+
+1) The 'exit' command:
+- The 'exit' command is designed to be executed at the highest priority using the assert_exit() command before even going into the parsing section.
+  This is advantageous because if nothing works, 'exit' will always work.

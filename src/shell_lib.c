@@ -39,22 +39,29 @@
 #include "flags.h"
 #include "shell_lib.h"
 #include "environment.h"
-#include "basic_utilities.h"
+#include "basic_utils.h"
+
+
+/*
+ ****************************
+ * Function definitions		*
+ ****************************
+ */
 
 //Parse the 'command' and store <command,arg_list> pairs in the array of 'cmd_t' structs.
 int parse_cmd(char *original_command, info_cmd *cmd_info){
-	
+
 	char *tokens[MAX_TOKENS];	//Tokens of a command
 	int (*counts)[4];	//Go over to (*tokenize_cmd())[4] and find out what this array represents.
 	int i, j, k;
-	
-	char *command = (char*)calloc(strlen(original_command)+1, sizeof(char));
-	if(command){
+
+	char *command = (char*)calloc(strlen(original_command)+1, sizeof(char));	//TODO..CAUTION!!!Need to release this memory somewhere before next prompt
+	if(command) {
 		strcpy(command, original_command);
 	}
-	else{
+	else {
 		//------- LOGGING ---------------
-		fprintf(stderr,"Shell Error: Memory allocation failed at parse_cmd():%d\n",__LINE__);
+		fprintf(stderr,"Shell Error [%d]: Memory allocation failed at parse_cmd()\n",__LINE__);
 		return -1;
 	}
 	/* First thing to do is to tokenize the command with delimiter ' '(WHITESPACE)
@@ -62,43 +69,42 @@ int parse_cmd(char *original_command, info_cmd *cmd_info){
 	 */
 	if((counts=tokenize_cmd(command, tokens)) == NULL){
 		//--------LOGGING----------
-		fprintf(stderr,"Shell Error: Too may tokens in command.\n");
+		fprintf(stderr,"Shell Error [%d]: Too may tokens in command.\n", __LINE__);
 		return -1;
 	}
-	
+
 	//Set the flag for type of command. Flags PIPED_CMD, BKGROUND_CMD and SINGLE_CMD will be set by this function only.
 	if((*counts)[1] && (*counts)[2])
 		cmd_type = PIPE_BK;	//Piped as well as backgrounded commands exists
 	else if((*counts)[1])
 		cmd_type = PIPED_CMD;
 	else if((*counts)[2])
-		cmd_type = BKGROUND_CMD;	
+		cmd_type = BKGROUND_CMD;
 	else if((*counts)[0])
 		cmd_type = SINGLE_CMD;
-	
+
 	//Store count infos
 	cmd_info->ntokens = (*counts)[0];
 	cmd_info->npipes = (*counts)[1];
 	cmd_info->nbkgnds = (*counts)[2];
 	cmd_info->ncommands = (*counts)[3];
-	
+
 	/* TODO...First release memory from the argument 'cmd_t *cmd_ptr' for processing the next command,
 	 * if it is already assigned some address(maybe for the previous command).
 	 */
 	if(cmd_info->cmd_ptr){
 		free(cmd_info->cmd_ptr);
-		//cmd_info->cmd_ptr = NULL;
 	}
-	
+
 	//NOTE:	If no. of pipes = x then no. of commands = x+1
 	cmd_info->cmd_ptr = (cmd_t*)calloc(cmd_info->ncommands, sizeof(cmd_t));
-	if(cmd_info->cmd_ptr == NULL){
+	if(cmd_info->cmd_ptr == NULL) {
 		//------------LOGGING---------------
-		fprintf(stderr,"Error: Memory allocation issue at parse_cmd()\n");
+		fprintf(stderr,"Shell Error [%d]: Memory allocation issue at parse_cmd()\n", __LINE__);
 		return -1;
 	}
-	
-	/* 
+
+	/*
 	 * TODO
 	 * Extract command names and arguments from the tokens and put them in cmd_ptr appropriately.
 	 * Example:	`sudo fdisk -l | grep /dev/sda8`
@@ -106,9 +112,10 @@ int parse_cmd(char *original_command, info_cmd *cmd_info){
 	 * The second command is 'grep' with argument '/dev/sda8'
 	 * '|', '&' or any other symbols are stored as part of the arguments.
 	 */
-	//Capture the first command name
-	cmd_info->cmd_ptr[0].cmd_name = cmd_info->cmd_ptr[0].args[0] = tokens[0];
-	for(i=1,j=0,k=1; i<(*counts)[0]; i++){
+	//Capture the first command name as cmd_name and as the 0th argument.
+	strcpy(cmd_info->cmd_ptr[0].cmd_name, tokens[0]);
+	cmd_info->cmd_ptr[0].args[0] = tokens[0];
+	for(i=1,j=0,k=1; i<(*counts)[0]; i++) {
 		/*
 		 * i -> Points through each token.
 		 * j -> Points through each cmd_info->cmd_ptr[], i.e., the struct cmd_t consecutive commands.
@@ -116,26 +123,29 @@ int parse_cmd(char *original_command, info_cmd *cmd_info){
 		 * k is initialized to 1 because the 0th argument is always the name of the command itself and the exec() family
 		 * of system calls(which will be used later) uses the same convention.
 		 */
-		 
+
 		// If current token is either '|' or '&&' and the immediate next token is not null,
 		// then take that next token as the next command-name.
-		if( ( (strcmp(tokens[i], "|")==0) || (strcmp(tokens[i], "&")==0) ) && (tokens[i+1]!=(char*)0) ){
+		if( ( (strcmp(tokens[i], "|")==0) || (strcmp(tokens[i], "&")==0) ) && (tokens[i+1]!=(char*)0) ) {
 			cmd_info->cmd_ptr[j].args[k] = tokens[i];
 			cmd_info->cmd_ptr[j].argc = k;
 			j++, i++;
 			//Immediately capture the next command name.
-			cmd_info->cmd_ptr[j].cmd_name = cmd_info->cmd_ptr[j].args[0] = tokens[i];
+			strcpy(cmd_info->cmd_ptr[j].cmd_name, tokens[i]);
+			cmd_info->cmd_ptr[j].args[k] = tokens[i];
 			k=1;	//reset args index for next command args
 		}
-		else{	//Otherwise consider the token as an argument
+		else {	//Otherwise consider the token as an argument
 			cmd_info->cmd_ptr[j].args[k] = tokens[i];
 			k++;
 		}
 	}
 	if(cmd_info->cmd_ptr[j].argc == 0)
 		cmd_info->cmd_ptr[j].argc = k-1;	//argc for the last command.
+	//for(j=0; j<cmd_info->ncommands; j++)
+	//	cmd_info->cmd_ptr[j].args[cmd_info->cmd_ptr[j].argc] = NULL;
 	//--i;
-	
+
 	//TODO
 	/*
 	 * The logic here is if any inbuilt command is encountered anywhere, the whole command will be ignored by the shell.
@@ -143,7 +153,7 @@ int parse_cmd(char *original_command, info_cmd *cmd_info){
 	 * But at this point we will consider it simple....[Truth is I don't know the logic behind it yet]
 	 */
 	identify_cmd_type(cmd_info->cmd_ptr, cmd_info->ncommands);
-	
+
 	return 0;
 }
 
@@ -157,12 +167,12 @@ int (*tokenize_cmd(char *cmd, char *tokens[MAX_TOKENS])) [4] {
 	//counts[1]->pipe_count('|')
 	//counts[2]->background_count('&')
 	//counts[3]->no of commands
-	
+
 	//Should always be set to 0. Otherwise previous values will retain and cause invalid results.
 	int c;
 	for(c=0; c<4; c++)
 		counts[c] = 0;
-	
+
 	if(is_null(cmd)){
 		return NULL;
 	}
@@ -187,14 +197,14 @@ int (*tokenize_cmd(char *cmd, char *tokens[MAX_TOKENS])) [4] {
 	return counts;
 }
 
-//Identify command type for individual commands pointed to by *commands 
+//Identify command type for individual commands pointed to by *commands
 void identify_cmd_type(cmd_t *commands, int n){
 	//n = No of cmd_t structs
 	int i;
 	for(i=0; i<n; i++){
 		//FYI...this will always be false for i=0
-		if(commands[i].cmd_name == NULL) {
-			
+		if(commands[i].cmd_name[0] == '\0') {
+
 			//Command will be in continuation mode if '|' symbol is encountered.
 			if(IS_ATLEAST_PRE_PIPE(commands[i-1].type))
 				cmd_type |= INCOMPLETE_CMD;
@@ -210,13 +220,13 @@ void identify_cmd_type(cmd_t *commands, int n){
 		}
 		else{	//Consider all else regular
 			commands[i].type = REGULAR_CMD;
-			
+
 			//Check for '|' or '&' or any other operator in the last argument of each command to know the type of command.
 			if(strcmp(commands[i].args[commands[i].argc], "|")==0)
 				commands[i].type |= PRE_PIPE;
 			else if(strcmp(commands[i].args[commands[i].argc], "&")==0)
 				commands[i].type |= BKGROUND_CMD;
-			
+
 			//Now check if the previous command was a PRE_PIPE so that the current command will be a POST_PIPE
 			if(i > 0){
 				if(IS_ATLEAST_PRE_PIPE(commands[i-1].type))
@@ -233,7 +243,7 @@ inline void assert_exit(char *cmd){
 	strcpy(temp,cmd);
 	if(!strcmp(strtok(temp," "),"exit"))
 		exit(0);
-	
+
 }
 
 //Search for a command in each directory defined by the PATH variable
@@ -242,7 +252,7 @@ char *search_cmd_in_path(const char *command){
 	//Just for safety
 	if(is_null(command))
 		return NULL;
-	
+
 	char PATH[ENV_PATH_SIZE];	//Environment variable PATH
 	static char cmd[PATH_MAX]="";	//Full pathname of the command that will be searched
 	FILE *cmd_file;		//File that will try to open the filename in 'cmd' to verify whether the file is in that directory
@@ -266,7 +276,7 @@ char *search_cmd_in_path(const char *command){
 			fclose(cmd_file);
 			return cmd;
 		}
-		
+
 	}
 	return NULL;
 }
@@ -274,24 +284,180 @@ char *search_cmd_in_path(const char *command){
 //Resolve full pathname for the command pointed to by *cmd_ptr
 int resolve_cmd_path(cmd_t *cmd_ptr){
 	char *temp_buff;
-	
+
 	//Search in the PATH environment variable
-	if((temp_buff=search_cmd_in_path((*cmd_ptr).cmd_name))){
-		cmd_ptr->cmd_name = temp_buff;	//If bug then try strcpy()
+	if((temp_buff=search_cmd_in_path(cmd_ptr->cmd_name))){
+		//cmd_ptr->cmd_name = temp_buff;	//If bug then try strcpy()
+		strcpy(cmd_ptr->cmd_name, temp_buff);
 		return 0;
 	}
-	
+
 	return -1;	//Not found
+}
+
+
+
+//Init PS1
+void init_ps1(){
+	change_ps1("irakr","lenovo-S510P");
+}
+
+//Change PS1
+void change_ps1(const char *user,const char *machinename){
+	if(is_null(user))	//Atleast 1st arg should be non-empty
+		return;
+
+	//For initial PS1 value
+	if((machinename!=(char*)0) || (strcmp(machinename,"")!=0)){
+		//Get current working directory
+		char dir[PATH_MAX];
+		if(getcwd(dir,PATH_MAX) == (char*)0){
+			perror("getcwd");
+			return;
+		}
+		strcpy(PS1,user);	//username portion(Eg: irakr)
+		strcat(PS1,"@");	//irakr@
+		strcat(PS1,machinename);	//irakr@lenovo-s510p
+		strcat(PS1,":");	//irakr@lenovo-s510p:
+		strcat(PS1,dir);	//irakr@lenovo-s510p:~/Programs/Unix/my_shell
+		strcat(PS1,"$ ");	//irakr@lenovo-s510p:~/Programs/Unix/my_shell$<space>
+	}
+	else{	//For user directed change(If the user entered the command :	$PS1=<some-string>)
+		strcpy(PS1,user);
+	}
+}
+
+//Manage the execution procedure
+int manage_execution(info_cmd *target){
+	//TODO...This implementation is not yet finally decided.
+	if(IS_ATLEAST_REG(cmd_type)){
+		//Execute procedure for regular commands...fork-and-exec
+		execute_regular(target);
+	}
+	else if(IS_ATLEAST_INBUILT(cmd_type)){
+		//Execdeclaring global variables as static in cute procedure for inbuilt commands...cd
+		execute_inbuilt(target);
+	}
+	//Ignored command type
+	else if(cmd_type == IGNORE)
+		return -1;
+	return 0;
+}
+
+//Some useful shortcuts(macros)
+#define COMMANDS	target->ncommands
+
+/* Macro for a simple fork-and-exec mechanism. The code section of the parent process is not included since it depends on the type of command.
+ * Therefore, the programmer should write codes for the parent process immediately after the invokation of this macro function.
+ *
+#define fork_exec(cmd)		pid_t cpid;										\
+				if((cpid=fork()) == -1){									\
+					fprintf(stderr,"Shell Error: [%d]", __LINE__);			\
+					perror("fork");	}										\
+				if(cpid == 0){												\
+					char *arg_ptr[] = cmd->args;								\
+					if(execv(cmd->cmd_name, arg_ptr) == -1){					\
+						fprintf(stderr,"Shell Error: [%d]", __LINE__);		\
+						perror("execv");									\
+						exit(EXIT_FAILURE);	}								\
+				}
+*/
+
+//Simple fork and exec code
+inline void fork_exec(cmd_t *cmd){
+	pid_t cpid;
+	if((cpid=fork()) == -1){
+		fprintf(stderr,"Shell Error: ");
+		perror("fork");
+		exit(EXIT_FAILURE);
+	}
+	if(cpid == 0){
+		if(execv(cmd->cmd_name, cmd->args) == -1){
+			fprintf(stderr,"Shell Error: ");
+			perror("execv");
+			exit(EXIT_FAILURE);
+		}
+	}
+}
+
+
+//Execution of regular commands. It handles all the execution situations like piping, backgroun, conditional, etc.
+void execute_regular(info_cmd *target){
+
+	//Just for safety
+	if(target==(info_cmd*)0)
+		return;
+
+	//pid_t cpid;
+	cmd_t *cmd_ptr;
+	//Pipe may be necessary.
+	int pipefd[2], c_exit_status;
+	short i;
+
+	//Error flag for each individual command
+	error_t eflag[target->ncommands];
+	//Initialize it all to NOERROR
+	for(i=0; i<target->ncommands; i++)
+		eflag[i] = NOERROR;
+
+	cmd_ptr = target->cmd_ptr;
+
+	//Resolve the complete pathname of the command.
+	for(i=0; i<target->ncommands; i++){
+		if(resolve_cmd_path(cmd_ptr+i) == -1){
+			//---------------- LOGGING ---------------------
+			eflag[i] = NOTRESOLVED_CMD;
+
+		}
+	}
+
+	//Start executing commands one by one
+	for(i=0; i<COMMANDS; i++){
+
+		//Skip the command if it was not resolved.
+		if(eflag[i] == NOTRESOLVED_CMD)
+			continue;
+
+		if(cmd_ptr[i].type == REGULAR_CMD){
+			fork_exec((cmd_ptr+i));
+			wait(&c_exit_status);	//Wait for child process to exit
+		}
+		else if(cmd_ptr[i].type == REG_BKGROUND){
+			strcpy(cmd_ptr[i].args[cmd_ptr[i].argc], "");	//Remove the '&' symbol fomr arg list
+			cmd_ptr[i].argc--;	//and decrement the no of arguments by 1
+			fork_exec(cmd_ptr+i);
+			//Dont wait for child process to exit in this case
+		}
+
+		/* TODO...For piped commands and others.
+		else if(){
+
+		}
+		*/
+	}//end for
+}
+
+//Execution of inbuilt commands.
+void execute_inbuilt(info_cmd *target){
+	cmd_t *cmd_ptr;
+
+	//Just for safety
+	if(target == NULL)
+		return;
+
+	cmd_ptr = target->cmd_ptr;
+
+
 }
 
 //Displays the command infos. Useful for debugging.
 void display_command_info(info_cmd *cmd_info){
-	
+
 	printf("No. of tokens: %d\n", cmd_info->ntokens);
 	printf("No. of pipe operators '|': %d\n", cmd_info->npipes);
 	printf("No. of background operators '&': %d\n", cmd_info->nbkgnds);
 	printf("No. of commands: %d\n\n", cmd_info->ncommands);
-	
+
 	//Global command type flag
 	printf("Original command type: ");
 	switch (cmd_type){
@@ -367,157 +533,6 @@ void display_command_info(info_cmd *cmd_info){
 		}
 		printf("\n");
 	}
-}
-
-
-//Init PS1
-void init_ps1(){
-	change_ps1("irakr","lenovo-S510P");
-}
-
-//Change PS1
-void change_ps1(const char *user,const char *machinename){
-	if(is_null(user))	//Atleast 1st arg should be non-empty
-		return;
-	
-	//For initial PS1 value
-	if((machinename!=(char*)0) || (strcmp(machinename,"")!=0)){
-		//Get current working directory
-		char dir[PATH_MAX];
-		if(getcwd(dir,PATH_MAX) == (char*)0){
-			perror("getcwd");
-			return;
-		}
-		strcpy(PS1,user);	//username portion(Eg: irakr)
-		strcat(PS1,"@");	//irakr@
-		strcat(PS1,machinename);	//irakr@lenovo-s510p
-		strcat(PS1,":");	//irakr@lenovo-s510p:
-		strcat(PS1,dir);	//irakr@lenovo-s510p:~/Programs/Unix/my_shell
-		strcat(PS1,"$ ");	//irakr@lenovo-s510p:~/Programs/Unix/my_shell$<space>
-	}
-	else{	//For user directed change(If the user entered the command :	$PS1=<some-string>)
-		strcpy(PS1,user);
-	}
-}
-
-//Manage the execution procedure
-int manage_execution(info_cmd *target){
-	//TODO...This implementation is not yet finally decided.
-	if(IS_ATLEAST_REG(cmd_type)){
-		//Execute procedure for regular commands...fork-and-exec
-		execute_regular(target);
-	}
-	else if(IS_ATLEAST_INBUILT(cmd_type)){
-		//Execdeclaring global variables as static in cute procedure for inbuilt commands...cd
-		execute_inbuilt(target);
-	}
-	//Ignored command type
-	else if(cmd_type == IGNORE)
-		return -1;	
-	return 0;
-}
-
-//Some useful shortcuts(macros)
-#define COMMANDS	target->ncommands
-
-/* Macro for a simple fork-and-exec mechanism. The code section of the parent process is not included since it depends on the type of command.
- * Therefore, the programmer should write codes for the parent process immediately after the invokation of this macro function.
- */
-#define fork_exec(cmd)		pid_t cpid;							\
-				if((cpid=fork()) == -1){					\
-					fprintf(stderr,"Shell Error: ");			\
-					perror("fork");	}					\
-				if(cpid == 0){							\
-					if(execv(cmd.cmd_name, cmd.args) == -1){		\
-						fprintf(stderr,"Shell Error: ");		\
-						perror("execv");				\
-						exit(EXIT_FAILURE);	}			\
-					/* exit(EXIT_SUCCESS); */				\
-				}
-/*
-//Simple fork and exec code
-inline void fork_exec(cmd_t cmd){
-	pid_t cpid;
-	if((cpid=fork()) == -1){
-		fprintf(stderr,"Shell Error: ");
-		perror("fork");
-	}
-	if(cpid == 0){
-		if(execv(cmd.cmd_name, cmd.args) == -1){
-			fprintf(stderr,"Shell Error: ");
-			perror("execv");
-		}
-	}
-}
-*/
-
-//Execution of regular commands. It handles all the execution situations like piping, backgroun, conditional, etc.
-void execute_regular(info_cmd *target){
-
-	//Just for safety
-	if(target==(info_cmd*)0)
-		return;
-
-	//pid_t cpid;
-	cmd_t *cmd_ptr;
-	//Pipe may be necessary.
-	int pipefd[2], c_exit_status;
-	short i;
-	
-	//Error flag for each individual command
-	error_t eflag[target->ncommands];
-	//Initialize it all to NOERROR
-	for(i=0; i<target->ncommands; i++)
-		eflag[i] = NOERROR;
-
-	cmd_ptr = target->cmd_ptr;
-	
-	//Resolve the complete pathname of the command.
-	for(i=0; i<target->ncommands; i++){
-		if(resolve_cmd_path(cmd_ptr+i) == -1){
-			//---------------- LOGGING ---------------------
-			eflag[i] = NOTRESOLVED_CMD;
-			
-		}
-	}
-	
-	//Start executing commands one by one
-	for(i=0; i<COMMANDS; i++){
-	
-		//Skip the command if it was not resolved.
-		if(eflag[i] == NOTRESOLVED_CMD)
-			continue;
-		
-		if(cmd_ptr[i].type == REGULAR_CMD){
-			fork_exec(cmd_ptr[i]);
-			wait(&c_exit_status);	//Wait for child process to exit
-		}
-		else if(cmd_ptr[i].type == REG_BKGROUND){
-			cmd_ptr[i].args[cmd_ptr[i].argc] = NULL;	//Remove the '&' symbol fomr arg list
-			cmd_ptr[i].argc--;	//and decrement the no of arguments by 1
-			fork_exec(cmd_ptr[i]);
-			//Dont wait for child process to exit in this case
-		}
-		
-		/* TODO...For piped commands and others.
-		else if(){
-		
-		}
-		*/
-	}//end for
-}
-
-//Execution of inbuilt commands.
-void execute_inbuilt(info_cmd *target){
-	cmd_t *cmd_ptr;
-	
-	//Just for safety
-	if(target == NULL)
-		return;
-	
-	cmd_ptr = target->cmd_ptr;
-	
-	
 }
 
 #undef COMMANDS

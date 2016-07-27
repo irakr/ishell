@@ -26,19 +26,29 @@
  */
 
 /*
- * basic_utilities.h
+ * basic_utils.h
  *
  * This file contains some macros for very basic but important functionalities. For eg: Checking for a NULL value, etc...
  */
 
-#if !defined(BASIC_UTILITIES_H)
-#define BASIC_UTILITIES_H
+#if !defined(BASIC_UTILS_H)
+#define BASIC_UTILS_H
 
-#define is_null(str)	((str==NULL) || (str[0]=='\0'))		
+#define is_null(ptr)	((ptr==NULL) || ((char)ptr==0))
 
 //Input stream flusher
 #define flush_stdin() 	int input = getchar();			\
 			while(input!='\n' && input!=EOF) 	input=getchar();
 
 
-#endif	//BASIC_UTILITIES_H
+/*
+ ****************************
+ * Function declarations	*
+ ****************************
+ */
+
+void cleanup_all(info_cmd *);		//Cleanup all dynamically allocated resource taken up by the current program.
+// [Try to make this function take variable argument list so that even if new data resources to be cleaned up is discovered in
+// the future, we can simply pass it to this function without having to make separate function for it.]
+
+#endif	//BASIC_UTILS_H

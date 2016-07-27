@@ -19,6 +19,7 @@ BIN_DIR=$(PREVIOUS_DIR)bin/
 SHELL_C=$(SRC_DIR)shell.c
 SHELL_LIB_C=$(SRC_DIR)shell_lib.c
 ENVIRONMENT_C=$(SRC_DIR)environment.c
+BASIC_UTILS_C=$(SRC_DIR)basic_utils.c
 
 #Variables that stores pathnames of object programs for each source files
 SHELL_O=$(SRC_DIR)shell.o
@@ -44,7 +45,7 @@ $(ENVIRONMENT_O):	$(ENVIRONMENT_C)
 
 #For debugging purpose
 debug:
-	$(CC) $(GDB) $(ENVIRONMENT_C) $(SHELL_LIB_C) $(SHELL_C) -o ishell
+	$(CC) $(GDB) $(ENVIRONMENT_C) $(BASIC_UTILS_C) $(SHELL_LIB_C) $(SHELL_C) -o ishell
 
 clean:
 	-rm -rf $(ALL_OBJECTS)

@@ -37,11 +37,19 @@
 #include "environment.h"
 #include "shell_lib.h"
 #include "flags.h"
-#include "basic_utilities.h"
+#include "basic_utils.h"
+
+
+
+/*
+ ****************************
+ * Function definitions		*
+ ****************************
+ */
 
 //Displays all the environment variables in the variable 'extern char **environ', unless specified explicitly in 'char *name'
 void print_environ(char *name){
-	
+
 	//Print everything in **environ if name==NULL
 	if(name==(char*)0){
 		char **ptr;
@@ -51,7 +59,7 @@ void print_environ(char *name){
 	}
 
 	//Otherwise print for specific variable in 'name'
-	char *value;	
+	char *value;
 	if(!(value=getenv(name))){
 		fprintf(stderr,"Error (In file %s:%d): The environment variable %s not found.\n", __FILE__, __LINE__, name);
 		return;

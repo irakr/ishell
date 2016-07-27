@@ -37,7 +37,7 @@
  *	This program is a basic implementation of an actual bash, ksh, or csh like shells found in Linux/Unix.
  *	Well it doesn't do much like the actual shell. Its just a small project of my own.
  */
- 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -46,7 +46,7 @@
 #include "flags.h"
 #include "shell_lib.h"
 #include "environment.h"
-#include "basic_utilities.h"
+#include "basic_utils.h"
 
 #define DEBUG	0	//Make it 1 to display debugging information
 
@@ -59,9 +59,10 @@ int main(void){
 
 	info_cmd command_info ={.cmd_ptr=NULL};	//This will be filled by the parse_cmd() function.
 	cmd_t *cmd = NULL;	//An array of structs each holding a command and its arguments.
-	
+
+	//TODO....
 	//@init_shell();
-	
+
 	/* TODO....
 	//Get the log file ready
 	if((log_file = fopen("/var/log/ishell/shell-logs","w+a")) == NULL){
@@ -77,7 +78,7 @@ int main(void){
 		}
 	}
 	*/
-	
+
 	//Initialize PS1 content
 	init_ps1();
 
@@ -93,10 +94,10 @@ int main(void){
 	 *	7) Repeat from step-1 until 'exit' command.
 	 */
 	while(1){
-		
+
 		//@reset_params();
 		RESET_ALL_FLAGS();
-		
+
 		printf("%s",PS1);	//Display prompt string(PS1)
 		if(!fgets(input_cmd,MAX_CMD_LENGTH,stdin)){	//Get input
 			perror("fgets");
@@ -105,32 +106,32 @@ int main(void){
 		if(strcmp(input_cmd,"\n") == 0)	//If Empty command then new prompt again
 			continue;
 		input_cmd[strlen(input_cmd)-1] = '\0';	//Replace '\n' with a '\0'
-		
+
 		//First check for 'exit' command.
 		assert_exit(input_cmd);
-		
+
 		//Parse input command if it is not one of the in-built command.
 		if(parse_cmd(input_cmd, &command_info) == -1){
 			fprintf(stderr,"Shell Error: Error while parsing the command.\n");
 			continue;
 		}
-		
+
 		#if DEBUG
 		display_command_info(&command_info);
 		#endif
-		
+
 		//TEST...
 		//print_environ("PATH");
-		
+
 		if(manage_execution(&command_info) == -1){
 			fprintf(stderr,"Shell Error: Command execution ignored\n");
 			continue;
 		}
-		
-		//TODO.....Latest work!!!!!!!!!! Starts here!!!!!!!!!
-		//Resolve full pathnames for each command parsed.
-		//@resolve_cmd_path(&cmd);		
-		
+
+        //Cleanup procedure
+        cleanup_all(&command_info);
+
 	}
+
 	return 0;
 }
