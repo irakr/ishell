@@ -25,14 +25,15 @@ BASIC_UTILS_C=$(SRC_DIR)basic_utils.c
 SHELL_O=$(SRC_DIR)shell.o
 SHELL_LIB_O=$(SRC_DIR)shell_lib.o
 ENVIRONMENT_O=$(SRC_DIR)environment.o
-ALL_OBJECTS=$(SHELL_O) $(SHELL_LIB_O) $(ENVIRONMENT_O)
+BASIC_UTILS_O=$(SRC_DIR)basic_utils.o
+ALL_OBJECTS=$(SHELL_O) $(SHELL_LIB_O) $(ENVIRONMENT_O) $(BASIC_UTILS_O)
 
 #Pathname of the file executable file
 ISHELL=$(BIN_DIR)ishell
 
 #The main target
-$(ISHELL):	$(SHELL_O) $(SHELL_LIB_O) $(ENVIRONMENT_O)
-	$(CC) $(SHELL_O) $(SHELL_LIB_O) -o $(ISHELL)
+$(ISHELL):	$(SHELL_O) $(SHELL_LIB_O) $(ENVIRONMENT_O) $(BASIC_UTILS_O)
+	$(CC) $(BASIC_UTILS_O) $(ENVIRONMENT_O) $(SHELL_LIB_O) $(SHELL_O) -o $(ISHELL)
 
 $(SHELL_O):	$(SHELL_C)
 	$(CC) $(CFLAGS) $(SHELL_C) -o $(SHELL_O)
@@ -42,6 +43,11 @@ $(SHELL_LIB_O):	$(SHELL_LIB_C)
 
 $(ENVIRONMENT_O):	$(ENVIRONMENT_C)
 	$(CC) $(CFLAGS) $(ENVIRONMENT_C) -o $(ENVIRONMENT_O)
+
+$(BASIC_UTILS_O):	$(BASIC_UTILS_C)
+	$(CC) $(CFLAGS) $(BASIC_UTILS_C) -o $(BASIC_UTILS_O)
+
+
 
 #For debugging purpose
 debug:

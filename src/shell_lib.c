@@ -89,7 +89,7 @@ int parse_cmd(char *original_command, info_cmd *cmd_info){
 	cmd_info->nbkgnds = (*counts)[2];
 	cmd_info->ncommands = (*counts)[3];
 
-	/* TODO...First release memory from the argument 'cmd_t *cmd_ptr' for processing the next command,
+	/* First release memory from the argument 'cmd_t *cmd_ptr' for processing the next command,
 	 * if it is already assigned some address(maybe for the previous command).
 	 */
 	if(cmd_info->cmd_ptr){
@@ -132,10 +132,10 @@ int parse_cmd(char *original_command, info_cmd *cmd_info){
 			j++, i++;
 			//Immediately capture the next command name.
 			strcpy(cmd_info->cmd_ptr[j].cmd_name, tokens[i]);
-			cmd_info->cmd_ptr[j].args[k] = tokens[i];
-			k=1;	//reset args index for next command args
+			cmd_info->cmd_ptr[j].args[0] = tokens[i];
+			k=1;	//reset args index to begin reading next command args
 		}
-		else {	//Otherwise consider the token as an argument
+		else {	//Otherwise consider the mere token as the current argument
 			cmd_info->cmd_ptr[j].args[k] = tokens[i];
 			k++;
 		}
@@ -205,7 +205,7 @@ void identify_cmd_type(cmd_t *commands, int n){
 		//FYI...this will always be false for i=0
 		if(commands[i].cmd_name[0] == '\0') {
 
-			//Command will be in continuation mode if '|' symbol is encountered.
+			//Command will be in continuation mode if '|' symbol is encountered.TODO
 			if(IS_ATLEAST_PRE_PIPE(commands[i-1].type))
 				cmd_type |= INCOMPLETE_CMD;
 			break;
@@ -224,8 +224,10 @@ void identify_cmd_type(cmd_t *commands, int n){
 			//Check for '|' or '&' or any other operator in the last argument of each command to know the type of command.
 			if(strcmp(commands[i].args[commands[i].argc], "|")==0)
 				commands[i].type |= PRE_PIPE;
-			else if(strcmp(commands[i].args[commands[i].argc], "&")==0)
+			else if(strcmp(commands[i].args[commands[i].argc], "&")==0){
 				commands[i].type |= BKGROUND_CMD;
+				continue;
+			}
 
 			//Now check if the previous command was a PRE_PIPE so that the current command will be a POST_PIPE
 			if(i > 0){
