@@ -4,10 +4,12 @@ It contains almost any feature that a shell contains. Its more like the bash she
 It can be used just like any shell via a terminal.
 
 # How to install and use
-- To install, just run the install.sh script in the main directory using sudo privilages. Run the command mentioned below:
+- To install, just run the install.sh script in the main directory using sudo privilege. Run the command mentioned below:
 	$ sudo ./install.sh
-- To use it, simply go to the terminal anytime and run the command 'ishell' to start using ISHELL.
+# How to use
+- Use the 'ishell' anytime to start using ISHELL.
 	$ ishell
+
 
 # How to manually compile and install(If you are more curious) 
 - Currently the process of building the software is not so clean.

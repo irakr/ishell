@@ -40,7 +40,7 @@
 #include "shell_lib.h"
 #include "environment.h"
 #include "basic_utils.h"
-
+#include "inbuilt_table.h"
 
 /*
  ****************************
@@ -61,7 +61,7 @@ int parse_cmd(char *original_command, info_cmd *cmd_info){
 	}
 	else {
 		//------- LOGGING ---------------
-		fprintf(stderr,"Shell Error [%d]: Memory allocation failed at parse_cmd()\n",__LINE__);
+		fprintf(stderr,"Shell Error [%s:%d]: Memory allocation failed at parse_cmd()\n", __FILE__, __LINE__);
 		return -1;
 	}
 	/* First thing to do is to tokenize the command with delimiter ' '(WHITESPACE)
@@ -69,7 +69,7 @@ int parse_cmd(char *original_command, info_cmd *cmd_info){
 	 */
 	if((counts=tokenize_cmd(command, tokens)) == NULL){
 		//--------LOGGING----------
-		fprintf(stderr,"Shell Error [%d]: Too may tokens in command.\n", __LINE__);
+		fprintf(stderr,"Shell Error [%s:%d]: Too may tokens in command.\n", __FILE__, __LINE__);
 		return -1;
 	}
 
@@ -100,7 +100,7 @@ int parse_cmd(char *original_command, info_cmd *cmd_info){
 	cmd_info->cmd_ptr = (cmd_t*)calloc(cmd_info->ncommands, sizeof(cmd_t));
 	if(cmd_info->cmd_ptr == NULL) {
 		//------------LOGGING---------------
-		fprintf(stderr,"Shell Error [%d]: Memory allocation issue at parse_cmd()\n", __LINE__);
+		fprintf(stderr,"Shell Error [%s:%d]: Memory allocation issue at parse_cmd()\n", __FILE__, __LINE__);
 		return -1;
 	}
 
@@ -146,19 +146,11 @@ int parse_cmd(char *original_command, info_cmd *cmd_info){
 	//	cmd_info->cmd_ptr[j].args[cmd_info->cmd_ptr[j].argc] = NULL;
 	//--i;
 
-	//TODO
-	/*
-	 * The logic here is if any inbuilt command is encountered anywhere, the whole command will be ignored by the shell.
-	 * Eg: `ls -l | cd ..` will not cause any effect. Try it on a bash shell. But the reverse somehow works, if you try in a real bash shell.
-	 * But at this point we will consider it simple....[Truth is I don't know the logic behind it yet]
-	 */
-	identify_cmd_type(cmd_info->cmd_ptr, cmd_info->ncommands);
-
 	return 0;
 }
 
-//Break the command 'cmd' into individual tokens(a WHITESPACE as a delimiter) and store it in 'tokens'
-//Returns the no. of tokens, pipes and background commands.
+/* Break the command 'cmd' into individual tokens(a WHITESPACE as a delimiter) and store it in 'tokens'.
+   Returns the no. of tokens, pipes and background commands.	*/
 int (*tokenize_cmd(char *cmd, char *tokens[MAX_TOKENS])) [4] {
 	//char *tokens[MAX_TOKENS] = {NULL};	//Pointers to each tokens of a command
 	int i=1;
@@ -331,18 +323,15 @@ void change_ps1(const char *user,const char *machinename){
 
 //Manage the execution procedure
 int manage_execution(info_cmd *target){
-	//TODO...This implementation is not yet finally decided.
-	if(IS_ATLEAST_REG(cmd_type)){
-		//Execute procedure for regular commands...fork-and-exec
-		execute_regular(target);
-	}
-	else if(IS_ATLEAST_INBUILT(cmd_type)){
-		//Execdeclaring global variables as static in cute procedure for inbuilt commands...cd
-		execute_inbuilt(target);
-	}
-	//Ignored command type
-	else if(cmd_type == IGNORE)
+	//TODO...This implementation is not yet decided final.
+
+	//First try to execute as an inbuilt command.
+	if(execute_inbuilt(target) == 0)
+		return 0;
+	//If the above fails then try to execute it as an external command.
+	if(execute_regular(target) == -1)
 		return -1;
+
 	return 0;
 }
 
@@ -366,12 +355,13 @@ int manage_execution(info_cmd *target){
 */
 
 //Simple fork and exec code
-inline void fork_exec(cmd_t *cmd){
+void fork_exec(cmd_t *cmd){
 	pid_t cpid;
 	if((cpid=fork()) == -1){
 		fprintf(stderr,"Shell Error: ");
 		perror("fork");
-		exit(EXIT_FAILURE);
+		return;
+		//exit(EXIT_FAILURE);
 	}
 	if(cpid == 0){
 		if(execv(cmd->cmd_name, cmd->args) == -1){
@@ -384,7 +374,7 @@ inline void fork_exec(cmd_t *cmd){
 
 
 //Execution of regular commands. It handles all the execution situations like piping, backgroun, conditional, etc.
-void execute_regular(info_cmd *target){
+int execute_regular(info_cmd *target){
 
 	//Just for safety
 	if(target==(info_cmd*)0)
@@ -440,16 +430,32 @@ void execute_regular(info_cmd *target){
 }
 
 //Execution of inbuilt commands.
-void execute_inbuilt(info_cmd *target){
+int execute_inbuilt(info_cmd *target){
 	cmd_t *cmd_ptr;
 
 	//Just for safety
 	if(target == NULL)
-		return;
+		return -1;
 
 	cmd_ptr = target->cmd_ptr;
 
+	//Only single inbuilt commands allowed
+	if(IS_ATLEAST_PIPE(cmd_type) || IS_ATLEAST_BKGROUND(cmd_type)){
+		fprintf(stderr, "Shell Error [%s:%d]: Command rejected\n", __FILE__, __LINE__);
+		return -1;
+	}
 
+	// TODO...Verify whether it is a valid built-in command. This function returns an id that maps the command to
+	// the appropriate sub-routine.
+	int id = verify_cmd(cmd_ptr);
+	if(id == ID_INVALID){
+		fprintf(stderr,"Shell Error [%s:%d]: Command not available\n", __FILE__, __LINE__);
+		return -1;
+	}
+	// Execute the sub-routines for the 'command; and 'id' pair.
+	if(exec_inbuild_cmd(cmd_ptr, id) == -1)
+		return -1;
+	return 0;
 }
 
 //Displays the command infos. Useful for debugging.

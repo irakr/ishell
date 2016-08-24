@@ -1,25 +1,27 @@
 /*
  * This is free and unencumbered software released into the public domain.
-
+ *
  * Anyone is free to copy, modify, publish, use, compile, sell, or
  * distribute this software, either in source code form or as a compiled
  * binary, for any purpose, commercial or non-commercial, and by any
  * means.
-
+ *
  * In jurisdictions that recognize copyright laws, the author or authors
  * of this software dedicate any and all copyright interest in the
  * software to the public domain. We make this dedication for the benefit
  * of the public at large and to the detriment of our heirs and
  * successors. We intend this dedication to be an overt act of
  * relinquishment in perpetuity of all present and future rights to this
- * software under copyr;IDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * software under copyright law.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
  * IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
  * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
-
+ *
  * For more information, please refer to <http://unlicense.org>
  */
 
@@ -64,17 +66,6 @@ typedef struct{
 	cmd_t *cmd_ptr;		//Pointer to a variable size array of cmd_t structs where each element(struct) holds a command and its arguments.
 } info_cmd;
 
-
-/*	Fixed-valued list of inbuilt commands with there valid arguments
- * .cmd_name is the command name, .args is the collection of valid arguments that the command accepts to be able to run.
- * .type is just an indication that it is an inbuilt command type(Not so important). Just provides identity.
- */
-static cmd_t inbuilt_cmds[] =
-{
-	{ .cmd_name="cd", .args={".", "..", "-", "~"}, .type=INBUILT_CMD}
-};
-
-
 /*	Macro function to initialize shell environment	*/
 #define init_shell()	\
 		init_logger();	\
@@ -111,10 +102,10 @@ void display_command_info(info_cmd *cmd_info);	//Display command infos
 
 int manage_execution(info_cmd *target);	//Initiate procedures that will execute the command
 
-void execute_regular(info_cmd *target);		//Execution of regular commands
+int execute_regular(info_cmd *target);		//Execution of regular commands
 
-void execute_inbuilt(info_cmd *target);		//Execution of inbuilt commands
+int execute_inbuilt(info_cmd *target);		//Execution of inbuilt commands
 
-inline void fork_exec(cmd_t *cmd);		//Simple fork and exec code
+void fork_exec(cmd_t *cmd);		//Simple fork and exec code
 
 #endif

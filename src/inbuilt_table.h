@@ -24,35 +24,40 @@
 
  * For more information, please refer to <http://unlicense.org>
  */
-#ifndef SH_LIMITS_H_
-#define SH_LIMITS_H_
 
-#include <limits.h>
-
-#define MAX_CMD_LENGTH 1024 	//characters(bytes)
-#define MAX_PS1_LENGTH 1024	    //Max length of PS1 variable
-#define ENV_PATH_SIZE 4096	    //Assigned size for PATH environment variable
-
-/*	Max tokens in a command(i.e., No of components in a command allowed)
- *	Eg: For a command: $ls -l | grep .txt$
- *	Here, tokenss are: 'ls', '-l', '|', 'grep', '.txt$'
+/*
+ * inbuilt_table.h
+ *
+ * This file contains the hash(not quiet) table of inbuilt commands.
  */
-#define MAX_TOKENS 50
 
-//Maximum no of arguments to a command
-#define MAX_ARGS 100
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <string.h>
+#include "shell_lib.h"
 
-//Maximum no. of combined or piped commands
-//Eg of combined commands: $ sudo fdisk -l;	where 'sudo' and 'fdisk' are separate commands.
-//Eg of piped commands:	$ fdisk -l | tee fdisk_info.txt;	where 'fdisk' is the first command and 'tee' is the command after the pipe operator.
-#define MAX_CMDS	15
+#ifndef INBUILT_TABLE_H_
+#define INBUILT_TABLE_H_
 
-//Max path length
-#if !defined(PATH_MAX)
-#define PATH_MAX 1024
-#endif
+// Command IDs
+#define ID_INVALID  -1
+#define ID_CHDIR    0
+#define ID_TYPE     1
+//TODO....Find out about all the inbuilt commands and fill up the macros above.
 
-//Maximum no of pipes that can be created for multiple commands
-#define MAX_PIPE 10
+/*	Fixed-valued list of inbuilt commands with there valid arguments.
+ * .cmd_name is the command name, .args is the collection of valid arguments that the command accepts to be able to run.
+ * .type is just an indication that it is an inbuilt command type(Not so important). Just provides identity.
+ */
+static cmd_t inbuilt_cmds[] =
+{
+	{ .cmd_name="cd", .args={".", "..", "-", "~"}, .type=INBUILT_CMD}
+};
+
+/*  Verify whether '*cmd' satisfies all the requirements of a particular built-in command    */
+int verify_cmd(cmd_t *cmd);
+
+/*  Execute sub-routines for the given command 'cmd_ptr' and 'id' pair.*/
+inline int exec_inbuild_cmd(cmd_t *cmd_ptr, int id);
 
 #endif

@@ -1,0 +1,36 @@
+########## ALGORITHM FOR THE SHELL ################
+
+Algorithm: shell()
+----------------------------------------------------------------------------
+1) Read input command from user.
+2) If input is blank, prompt for next command, i.e., go to step-1.
+3) Check for 'exit' command.
+4) Parse the command.	[Algo: parse_cmd()]
+  4.1) Split the command into tokens.	[Algo: tokenize()]
+  4.2) Extract necessary information about the command. Example: no of tokens, pipes, backgrounds, etc.	[Algo: tokenize()]
+  4.3) Organize the command appropriately.
+  4.4) Determine the types of each command, whether it is in-built or regular or maybe other complex types.	[Algo: identify_cmd_type()]
+6) If in-built then execute codes for that, else if regular then check for pipes, redirections and perform fork-and-exec.
+7) Repeat from step-1 until 'exit' command.
+
+
+########## NEW ALGORITHM TO BE APPLIED ################
+
+Algorithm: shell()
+-----------------------------------------------------------------------------
+1) Read input command from user.
+2) If input is blank, prompt for next command, i.e., go to step-1.
+3) Check for 'exit' command.
+4) Parse the command.	[Algo: parse_cmd()]
+  4.1) Split the command into tokens.	[Algo: tokenize()]
+  4.2) Extract necessary information about the command. Example: no of tokens, pipes, backgrounds, etc.	[Algo: tokenize()]
+  4.3) Organize the command appropriately.
+5) Check if the command is inbuilt(considering some additional parameters that may also change the behaviour of the command). If so,
+  then call appropriate procedures to execute them.
+6) Otherwise, consider the command as external(which are actually other pre-written executable programs). In order to execute these external
+  programs, the fork-and-exec algorithm is used.
+  fork-and-exec():
+  - This is a traditional method used by any shell program(not just shell) in order to invoke another program.
+  - First, a child process is created using the fork() system call.
+  - Then a call to the exec() system call, which takes the executable program's name as arguments, in that child process is made. 
+  - This replaces the whole process image of that child process with the image of the invoked program.

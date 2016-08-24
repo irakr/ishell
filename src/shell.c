@@ -57,7 +57,7 @@ FILE *history;	//File that stores the history of commands executed till date.
 int main(void){
 	char input_cmd[MAX_CMD_LENGTH]="";	//Command entered by the user including arguments,pipes,redirections,etc.
 
-	info_cmd command_info ={.cmd_ptr=NULL};	//This will be filled by the parse_cmd() function.
+	info_cmd command_info = {.cmd_ptr=NULL};	//This will be filled by the parse_cmd() function.
 	cmd_t *cmd = NULL;	//An array of structs each holding a command and its arguments.
 
 	//TODO....
@@ -83,27 +83,19 @@ int main(void){
 	init_ps1();
 
 	/*
-	 *	The algorithm for this shell is simply to:
-	 *
-	 *	1) Read input command from user.
-	 *	2) If input is blank, prompt for next command, i.e., go to step-1.
-	 *	3) Check for 'exit' command.
-	 *	4) Parse the command by the parse_cmd() procedure.
-	 *	5) During parsing, determine the type of command; whether in-built or regular.
-	 *	6) If in-built then execute codes for that, else if regular then check for pipes, redirections and perform fork-and-exec.
-	 *	7) Repeat from step-1 until 'exit' command.
+	 *	The algorithm for this shell is properly demonstrated in the file 'iSHell algorithm' located in the 'docs' directory.
 	 */
 	while(1){
 
 		//@reset_params();
 		RESET_ALL_FLAGS();
 
-		printf("%s",PS1);	//Display prompt string(PS1)
-		if(!fgets(input_cmd,MAX_CMD_LENGTH,stdin)){	//Get input
+		printf("%s", PS1);	//Display prompt string(PS1)
+		if(!fgets(input_cmd, MAX_CMD_LENGTH, stdin)){	//Get input
 			perror("fgets");
 			exit(EXIT_FAILURE);
 		}
-		if(strcmp(input_cmd,"\n") == 0)	//If Empty command then new prompt again
+		if(strcmp(input_cmd, "\n") == 0)	//If Empty command then new prompt again
 			continue;
 		input_cmd[strlen(input_cmd)-1] = '\0';	//Replace '\n' with a '\0'
 
@@ -112,7 +104,7 @@ int main(void){
 
 		//Parse input command if it is not one of the in-built command.
 		if(parse_cmd(input_cmd, &command_info) == -1){
-			fprintf(stderr,"Shell Error: Error while parsing the command.\n");
+			fprintf(stderr,"Shell Error [%s:%d]: Error while parsing the command.\n", __FILE__, __LINE__);
 			continue;
 		}
 
@@ -124,7 +116,7 @@ int main(void){
 		//print_environ("PATH");
 
 		if(manage_execution(&command_info) == -1){
-			fprintf(stderr,"Shell Error: Command execution ignored\n");
+			fprintf(stderr,"Shell Error [%s:%d]: Command execution ignored\n", __FILE__, __LINE__);
 			continue;
 		}
 

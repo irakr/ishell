@@ -1,4 +1,34 @@
-shell_lib.c: In function ‘tokenize_cmd’:
-shell_lib.c:154:2: warning: return from incompatible pointer type [enabled by default]
+In file included from ./basic_utils.c:39:0:
+./basic_utils.c: In function ‘cleanup_all’:
+./basic_utils.h:37:39: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define is_null(ptr) ((ptr==NULL) || ((char)ptr==0))
+                                       ^
+./basic_utils.c:51:5: note: in expansion of macro ‘is_null’
+  if(is_null(cmd_info)){
+     ^
+In file included from ./shell_lib.c:42:0:
+./shell_lib.c: In function ‘tokenize_cmd’:
+./basic_utils.h:37:39: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define is_null(ptr) ((ptr==NULL) || ((char)ptr==0))
+                                       ^
+./shell_lib.c:176:5: note: in expansion of macro ‘is_null’
+  if(is_null(cmd)){
+     ^
+./shell_lib.c:197:2: warning: return from incompatible pointer type [enabled by default]
   return counts;
   ^
+In file included from ./shell_lib.c:42:0:
+./shell_lib.c: In function ‘search_cmd_in_path’:
+./basic_utils.h:37:39: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define is_null(ptr) ((ptr==NULL) || ((char)ptr==0))
+                                       ^
+./shell_lib.c:255:5: note: in expansion of macro ‘is_null’
+  if(is_null(command))
+     ^
+./shell_lib.c: In function ‘change_ps1’:
+./basic_utils.h:37:39: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define is_null(ptr) ((ptr==NULL) || ((char)ptr==0))
+                                       ^
+./shell_lib.c:309:5: note: in expansion of macro ‘is_null’
+  if(is_null(user)) //Atleast 1st arg should be non-empty
+     ^
