@@ -3,15 +3,16 @@
 It contains almost any feature that a shell contains. Its more like the bash shell.
 It can be used just like any shell via a terminal.
 
-# How to install and use
-- To install, just run the install.sh script in the main directory using sudo privilege. Run the command mentioned below:
+# How to install
+- To install, just run the install.sh script in the main directory using sudo privilege.
+  Run the command mentioned below:
 	$ sudo ./install.sh
+
 # How to use
 - Use the 'ishell' anytime to start using ISHELL.
 	$ ishell
 
-
-# How to manually compile and install(If you are more curious) 
+# How to manually compile and install(For the curious)
 - Currently the process of building the software is not so clean.
 - After you download the package, go to the src/ directory.
 - Then run the 'make' command from your terminal.
@@ -20,7 +21,7 @@ It can be used just like any shell via a terminal.
 - Performing the second option will let you run the command directly from your terminal by simply entering the executable filename 'ishell' as
 	$ ishell
 
-# OUTPUT
+# Features
 - Currently you can run any simple command without using pipes. A single background command might still work.
 	Example: $ gedit &
 - The correct and complete output will be soon produced.
